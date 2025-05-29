@@ -1,0 +1,53 @@
+[
+  {
+    "Id": "ABC-001",
+    "Name": "City Sightseeing Tour",
+    "Description": "Explore the city's main attractions with our guided tour",
+    "Price": 49.99,
+    "Currency": "USD",
+    "SKU": "TOUR-CITY-001",
+    "Categories": {
+      "City Tours": "Tours that showcase the main features and landmarks of a city.",
+      "Guided Tours": "Tours led by knowledgeable guides providing local insights."
+    },
+    "Attributes": {
+      "Duration": "3 hours",
+      "Language": "English",
+      "Transportation": "Bus"
+    }
+  },
+  {
+    "Id": "ABC-002",
+    "Name": "Mountain Hiking Adventure",
+    "Description": "Experience the beauty of nature with our mountain hiking tour",
+    "Price": 79.99,
+    "Currency": "USD",
+    "SKU": "TOUR-HIKING-001",
+    "Categories": {
+      "Outdoor Activities": "Activities conducted in natural, open-air environments.",
+      "Adventure": "Exciting experiences featuring physical challenge and exploration."
+    },
+    "Attributes": {
+      "Duration": "6 hours",
+      "Difficulty": "Moderate",
+      "Includes": "Guide, Water, Snacks"
+    }
+  },
+  {
+    "Id": "ABC-003",
+    "Name": "Historical Museum Pass",
+    "Description": "Access to the city's premier historical museum",
+    "Price": 24.99,
+    "Currency": "USD",
+    "SKU": "MUSEUM-HIST-001",
+    "Categories": {
+      "Museums": "Visits to cultural and historical exhibits in museum settings.",
+      "Culture": "Experiences highlighting local customs, art, and heritage."
+    },
+    "Attributes": {
+      "Duration": "1 day",
+      "Includes": "Audio guide",
+      "Opening Hours": "9:00 AM - 5:00 PM"
+    }
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "productId": "ABC-001",
+    "type": "Description",
+    "title": "City Sightseeing Tour",
+    "description": "Explore the city's main attractions with our guided tour. Visit historical landmarks, beautiful parks, and iconic buildings. Our experienced guides will share fascinating stories and historical facts.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "ABC-001",
+    "type": "Image",
+    "title": "Tour Bus",
+    "description": null,
+    "mediaUrl": "https://example.com/images/city-tour-bus.jpg",
+    "order": 2
+  },
+  {
+    "productId": "ABC-001",
+    "type": "Image",
+    "title": "City Panorama",
+    "description": null,
+    "mediaUrl": "https://example.com/images/city-panorama.jpg",
+    "order": 3
+  },
+  {
+    "productId": "ABC-002",
+    "type": "Description",
+    "title": "Mountain Hiking Adventure",
+    "description": "Experience the beauty of nature with our mountain hiking tour. Trek through scenic trails, enjoy breathtaking views, and connect with nature. Suitable for moderately fit individuals.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "ABC-002",
+    "type": "Image",
+    "title": "Mountain Trail",
+    "description": null,
+    "mediaUrl": "https://example.com/images/mountain-trail.jpg",
+    "order": 2
+  },
+  {
+    "productId": "ABC-002",
+    "type": "Video",
+    "title": "Hiking Experience",
+    "description": null,
+    "mediaUrl": "https://example.com/videos/hiking-experience.mp4",
+    "order": 3
+  },
+  {
+    "productId": "ABC-003",
+    "type": "Description",
+    "title": "Historical Museum Pass",
+    "description": "Access to the city's premier historical museum. Explore artifacts dating back centuries and learn about the rich history of the region. Audio guides available in multiple languages.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "ABC-003",
+    "type": "Image",
+    "title": "Museum Entrance",
+    "description": null,
+    "mediaUrl": "https://example.com/images/museum-entrance.jpg",
+    "order": 2
+  },
+  {
+    "productId": "ABC-003",
+    "type": "Image",
+    "title": "Main Exhibition Hall",
+    "description": null,
+    "mediaUrl": "https://example.com/images/exhibition-hall.jpg",
+    "order": 3
+  }
+]

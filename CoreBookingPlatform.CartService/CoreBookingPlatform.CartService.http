@@ -1,0 +1,6 @@
+@CoreBookingPlatform.CartService_HostAddress = http://localhost:5285
+
+GET {{CoreBookingPlatform.CartService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

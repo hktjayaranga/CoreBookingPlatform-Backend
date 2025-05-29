@@ -1,0 +1,6 @@
+@CoreBookingPlatform.MockExternalApis_HostAddress = http://localhost:5069
+
+GET {{CoreBookingPlatform.MockExternalApis_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

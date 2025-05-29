@@ -1,0 +1,96 @@
+{
+  "CDE-101": [
+    {
+      "ProductId": "CDE-101",
+      "Type": "Description",
+      "Title": "Sunset Sailing Cruise",
+      "Description": "Experience the magic of sunset from the water on our luxury sailing yacht. Cruise along the coastline as the sky transforms with vibrant colors. Our experienced captain will ensure a smooth and memorable journey while you enjoy complimentary drinks and light snacks.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "CDE-101",
+      "Type": "Image",
+      "Title": "Sailing Yacht",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/sailing-yacht.jpg",
+      "Order": 2
+    },
+    {
+      "ProductId": "CDE-101",
+      "Type": "Image",
+      "Title": "Sunset View",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/sunset-cruise.jpg",
+      "Order": 3
+    }
+  ],
+  "CDE-102": [
+    {
+      "ProductId": "CDE-102",
+      "Type": "Description",
+      "Title": "Wine Tasting Tour",
+      "Description": "Discover the region's finest wineries on this guided tour. Visit three distinctive vineyards, learn about winemaking processes, and sample a variety of premium wines. Our knowledgeable guides will share insights about wine appreciation and local viticulture traditions.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "CDE-102",
+      "Type": "Image",
+      "Title": "Vineyard",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/vineyard.jpg",
+      "Order": 2
+    },
+    {
+      "ProductId": "CDE-102",
+      "Type": "Image",
+      "Title": "Wine Tasting",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/wine-tasting.jpg",
+      "Order": 3
+    },
+    {
+      "ProductId": "CDE-102",
+      "Type": "Video",
+      "Title": "Tour Preview",
+      "Description": null,
+      "MediaUrl": "https://example.com/videos/wine-tour-preview.mp4",
+      "Order": 4
+    }
+  ],
+  "CDE-103": [
+    {
+      "ProductId": "CDE-103",
+      "Type": "Description",
+      "Title": "Helicopter City Tour",
+      "Description": "Soar above the city skyline in a state-of-the-art helicopter for an unforgettable aerial adventure. See iconic landmarks from a unique perspective and capture stunning photos. Your pilot will provide interesting commentary about the city's history and architecture throughout the flight.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "CDE-103",
+      "Type": "Image",
+      "Title": "Helicopter",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/helicopter.jpg",
+      "Order": 2
+    },
+    {
+      "ProductId": "CDE-103",
+      "Type": "Image",
+      "Title": "Aerial City View",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/aerial-city-view.jpg",
+      "Order": 3
+    },
+    {
+      "ProductId": "CDE-103",
+      "Type": "Video",
+      "Title": "Helicopter Experience",
+      "Description": null,
+      "MediaUrl": "https://example.com/videos/helicopter-experience.mp4",
+      "Order": 4
+    }
+  ]
+}

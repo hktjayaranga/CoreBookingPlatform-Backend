@@ -1,0 +1,281 @@
+﻿using CoreBookingPlatform.AdapterService.Adapters.AbcAdapter;
+using CoreBookingPlatform.AdapterService.Interfaces;
+using CoreBookingPlatform.AdapterService.Models.DTOs;
+using CoreBookingPlatform.ProductService.Models.DTOs;
+using System.Net;
+using System.Text;
+using System.Text.Json;
+
+namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
+{
+    public class CdeAdapter : IAdapter
+    {
+
+        private readonly HttpClient _externalApiClient;
+        private readonly HttpClient _productServiceClient;
+        private readonly ILogger<CdeAdapter> _logger;
+        private readonly int _adapterId = 2;
+        public string ExternalSystemName => "CDE";
+
+        public CdeAdapter(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<CdeAdapter> logger)
+        {
+            _externalApiClient = httpClientFactory.CreateClient("CdeApi");
+            _productServiceClient = httpClientFactory.CreateClient("ProductApi");
+            _logger = logger;
+        }
+
+        public async Task ImportProductsAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching products from CDE external API...");
+                var response = await _externalApiClient.GetAsync("api/cde/products");
+                response.EnsureSuccessStatusCode();
+                var productsJson = await response.Content.ReadAsStringAsync();
+                var externalProducts = JsonSerializer.Deserialize<List<CdeProductDto>>(productsJson);
+
+                if (externalProducts == null || !externalProducts.Any())
+                {
+                    _logger.LogWarning("No products found in CDE external API.");
+                    return;
+                }
+
+                _logger.LogInformation("Found {Count} products to import.", externalProducts.Count);
+
+                foreach (var externalProduct in externalProducts)
+                {
+                    if (string.IsNullOrWhiteSpace(externalProduct.Id))
+                    {
+                        _logger.LogWarning("Skipping product with empty or null ID.");
+                        continue;
+                    }
+
+                    var existingProductResponse = await _productServiceClient.GetAsync(
+                        $"api/products/external?externalId={externalProduct.Id}&externalSystemName={ExternalSystemName}");
+                    if (existingProductResponse.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation("Product {ExternalId} already exists, skipping import.", externalProduct.Id);
+                        continue;
+                    }
+                    else if (existingProductResponse.StatusCode != HttpStatusCode.NotFound)
+                    {
+                        _logger.LogWarning("Error checking for existing product {ExternalId}: {StatusCode}",
+                            externalProduct.Id, existingProductResponse.StatusCode);
+                        continue;
+                    }
+
+                    var contentResponse = await _externalApiClient.GetAsync($"api/cde/products/{externalProduct.Id}/content");
+                    if (!contentResponse.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Content not found for product {ExternalId}: {StatusCode}",
+                            externalProduct.Id, contentResponse.StatusCode);
+                        continue;
+                    }
+
+                    var contentJson = await contentResponse.Content.ReadAsStringAsync();
+                    var externalContents = JsonSerializer.Deserialize<List<CdeContentDto>>(contentJson) ?? new List<CdeContentDto>();
+
+                    var createProductDto = new CreateProductDto
+                    {
+                        ProductName = externalProduct.Name,
+                        ProductDescription = externalProduct.Description,
+                        BasePrice = externalProduct.Price,
+                        Currency = externalProduct.Currency,
+                        SKU = externalProduct.SKU,
+                        AdapterId = _adapterId,
+                        ExternalSystemName = ExternalSystemName,
+                        ExternalId = externalProduct.Id,
+                        Categories = externalProduct.Categories.Select(t => new CreateCategoryDto
+                        {
+                            Name = t.Key,
+                            Description = t.Value
+                        }).ToList(),
+                        Attributes = externalProduct.Attributes.Select(p => new CreateProductAttributeDto
+                        {
+                            Name = p.Key,
+                            Value = p.Value
+                        }).ToList(),
+                        Contents = externalContents.Select(c => new CreateProductContentDto
+                        {
+                            ContentType = c.Type,
+                            Title = c.Title,
+                            Description = c.Description,
+                            MediaUrl = c.MediaUrl,
+                            SortOrder = c.Order
+                        }).ToList()
+                    };
+
+                    var productJson = JsonSerializer.Serialize(createProductDto);
+                    var content = new StringContent(productJson, Encoding.UTF8, "application/json");
+                    var productResponse = await _productServiceClient.PostAsync("api/products", content);
+                    productResponse.EnsureSuccessStatusCode();
+
+                    _logger.LogInformation("Successfully imported product {ExternalId} from CDE.", externalProduct.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error importing products from CDE external API.");
+                throw;
+            }
+        }
+
+        public async Task ImportProductContentAsync(string externalProductId)
+        {
+            try
+            {
+                var productResponse = await _productServiceClient.GetAsync(
+                    $"api/products/external?externalId={externalProductId}&externalSystemName={ExternalSystemName}");
+
+                if (!productResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Product {ExternalId} not found in product service.", externalProductId);
+                    return;
+                }
+
+                var productJson = await productResponse.Content.ReadAsStringAsync();
+                var product = JsonSerializer.Deserialize<ProductDto>(productJson);
+                if (product == null)
+                {
+                    _logger.LogWarning("Failed to deserialize product {ExternalId}.", externalProductId);
+                    return;
+                }
+
+                var contentResponse = await _externalApiClient.GetAsync($"api/cde/products/{externalProductId}/content");
+                contentResponse.EnsureSuccessStatusCode();
+                var contentJson = await contentResponse.Content.ReadAsStringAsync();
+                var externalContents = JsonSerializer.Deserialize<List<CdeContentDto>>(contentJson) ?? new List<CdeContentDto>();
+
+                if (!externalContents.Any())
+                {
+                    _logger.LogWarning("No content found for product {ExternalId}.", externalProductId);
+                    return;
+                }
+
+                foreach (var content in externalContents)
+                {
+                    var createContentDto = new CreateProductContentDto
+                    {
+                        ProductId = product.ProductId,
+                        ContentType = content.Type,
+                        Title = content.Title,
+                        Description = content.Description,
+                        MediaUrl = content.MediaUrl,
+                        SortOrder = content.Order
+                    };
+
+                    var contentJsonData = JsonSerializer.Serialize(createContentDto);
+                    var contentPayload = new StringContent(contentJsonData, Encoding.UTF8, "application/json");
+                    var response = await _productServiceClient.PostAsync("api/products/content", contentPayload);
+                    response.EnsureSuccessStatusCode();
+
+                    _logger.LogInformation("Imported content for product {ExternalId}.", externalProductId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error importing content for product {ExternalId}.", externalProductId);
+                throw;
+            }
+        
+        }
+
+        public async Task<ProductAvailabilityDto> CheckAvailabilityAsync(string externalProductId)
+        {
+            try
+            {
+                var response = await _externalApiClient.GetAsync($"api/cde/products/{externalProductId}/availability");
+                response.EnsureSuccessStatusCode();
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var availability = JsonSerializer.Deserialize<CdeAvailabilityDto>(jsonData);
+                return new ProductAvailabilityDto
+                {
+                    ExternalId = externalProductId,
+                    IsAvailable = availability.IsAvailable,
+                    CurrentPrice = availability.Price,
+                    Quantity = availability.Quantity
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking availability for product {ExternalId}", externalProductId);
+                throw;
+            }
+        }
+
+        public async Task<List<BookingResultDto>> CreateBookingAsync(List<BookingItemDto> items)
+        {
+            var results = new List<BookingResultDto>();
+            foreach (var item in items)
+            {
+                try
+                {
+                    var response = await _externalApiClient.PostAsJsonAsync("api/cde/bookings", new
+                    {
+                        ProductId = item.ExternalProductId,
+                        Quantity = item.Quantity
+                    });
+                    response.EnsureSuccessStatusCode();
+                    var bookingData = await response.Content.ReadFromJsonAsync<CdeBookingResponse>();
+                    results.Add(new BookingResultDto
+                    {
+                        ExternalProductId = item.ExternalProductId,
+                        BookingId = bookingData.BookingId,
+                        Success = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to create booking for {ExternalProductId}", item.ExternalProductId);
+                    results.Add(new BookingResultDto
+                    {
+                        ExternalProductId = item.ExternalProductId,
+                        Success = false,
+                        ErrorMessage = ex.Message
+                    });
+                }
+            }
+            return results;
+        }
+
+        public async Task<List<BookingResultDto>> CancelBookingsAsync(List<string> bookingIds)
+        {
+            var results = new List<BookingResultDto>();
+            foreach (var bookingId in bookingIds)
+            {
+                try
+                {
+                    var response = await _externalApiClient.PostAsJsonAsync("api/abc/bookings/cancel", new { BookingId = bookingId });
+                    response.EnsureSuccessStatusCode();
+                    results.Add(new BookingResultDto
+                    {
+                        BookingId = bookingId,
+                        Success = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to cancel booking {BookingId}", bookingId);
+                    results.Add(new BookingResultDto
+                    {
+                        BookingId = bookingId,
+                        Success = false,
+                        ErrorMessage = ex.Message
+                    });
+                }
+            }
+            return results;
+        }
+
+        public class CdeBookingResponse
+        {
+            public string BookingId { get; set; }
+        }
+
+    }
+
+
+
+
+}
+

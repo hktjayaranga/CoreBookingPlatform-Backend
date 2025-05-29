@@ -1,0 +1,53 @@
+[
+  {
+    "Id": "CDE-101",
+    "Name": "Sunset Sailing Cruise",
+    "Description": "Enjoy a beautiful sunset while sailing along the coast",
+    "Price": 89.99,
+    "Currency": "USD",
+    "SKU": "CRUISE-SUNSET-101",
+    "Categories": {
+      "Water Activities": "Recreational experiences on lakes, rivers, or seas.",
+      "Cruises": "Leisure trips on a boat or ship, often with scenic routes."
+    },
+    "Attributes": {
+      "Duration": "2 hours",
+      "Includes": "Drinks, Light snacks",
+      "Departure": "Marina Bay"
+    }
+  },
+  {
+    "Id": "CDE-102",
+    "Name": "Wine Tasting Tour",
+    "Description": "Visit local wineries and taste premium wines with expert guides",
+    "Price": 129.99,
+    "Currency": "USD",
+    "SKU": "TOUR-WINE-102",
+    "Categories": {
+      "Food & Drink": "Experiences centered around culinary delights and beverages.",
+      "Guided Tours": "Tours led by knowledgeable guides providing local insights."
+    },
+    "Attributes": {
+      "Duration": "5 hours",
+      "Includes": "Transportation, Tastings at 3 wineries",
+      "Minimum Age": "21"
+    }
+  },
+  {
+    "Id": "CDE-103",
+    "Name": "Helicopter City Tour",
+    "Description": "See the city from above with our exclusive helicopter tour",
+    "Price": 299.99,
+    "Currency": "USD",
+    "SKU": "TOUR-HELI-103",
+    "Categories": {
+      "Air Tours": "Scenic flights offering aerial views of landmarks.",
+      "Luxury Experiences": "High-end, premium activities for an exclusive feel."
+    },
+    "Attributes": {
+      "Duration": "30 minutes",
+      "Capacity": "3 passengers",
+      "Includes": "Champagne welcome"
+    }
+  }
+]

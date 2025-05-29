@@ -1,0 +1,20 @@
+[
+  {
+    "productId": "CDE-101",
+    "isAvailable": true,
+    "quantity": 8,
+    "price": 89.99
+  },
+  {
+    "productId": "CDE-102",
+    "isAvailable": true,
+    "quantity": 15,
+    "price": 129.99
+  },
+  {
+    "productId": "CDE-103",
+    "isAvailable": false,
+    "quantity": 0,
+    "price": 299.99
+  }
+]
