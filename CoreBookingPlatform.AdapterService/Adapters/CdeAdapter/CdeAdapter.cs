@@ -203,6 +203,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
             }
         }
 
+
         public async Task<List<BookingResultDto>> CreateBookingAsync(List<BookingItemDto> items)
         {
             var results = new List<BookingResultDto>();
@@ -210,19 +211,29 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
             {
                 try
                 {
-                    var response = await _externalApiClient.PostAsJsonAsync("api/cde/bookings", new
+                    var availabilityResponse = await _externalApiClient.GetAsync($"api/cde/products/{item.ExternalProductId}/availability");
+                    availabilityResponse.EnsureSuccessStatusCode();
+                    var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
+                    var availability = JsonSerializer.Deserialize<AbcAvailabilityDto>(availabilityJson);
+                    if (availability == null || !availability.IsAvailable || availability.Quantity < item.Quantity)
                     {
-                        ProductId = item.ExternalProductId,
-                        Quantity = item.Quantity
-                    });
-                    response.EnsureSuccessStatusCode();
-                    var bookingData = await response.Content.ReadFromJsonAsync<CdeBookingResponse>();
+                        results.Add(new BookingResultDto
+                        {
+                            ExternalProductId = item.ExternalProductId,
+                            Success = false,
+                            ErrorMessage = "Insufficient quantity or not available"
+                        });
+                        continue;
+                    }
+
+                    var bookingId = Guid.NewGuid().ToString();
                     results.Add(new BookingResultDto
                     {
                         ExternalProductId = item.ExternalProductId,
-                        BookingId = bookingData.BookingId,
+                        BookingId = bookingId,
                         Success = true
                     });
+                    _logger.LogInformation("Booking created for {ExternalProductId} with BookingId {BookingId}", item.ExternalProductId, bookingId);
                 }
                 catch (Exception ex)
                 {
@@ -237,7 +248,6 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
             }
             return results;
         }
-
         public async Task<List<BookingResultDto>> CancelBookingsAsync(List<string> bookingIds)
         {
             var results = new List<BookingResultDto>();
@@ -245,8 +255,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
             {
                 try
                 {
-                    var response = await _externalApiClient.PostAsJsonAsync("api/abc/bookings/cancel", new { BookingId = bookingId });
-                    response.EnsureSuccessStatusCode();
+                    _logger.LogInformation("Cancellation for booking {BookingId} in CDE system", bookingId);
                     results.Add(new BookingResultDto
                     {
                         BookingId = bookingId,

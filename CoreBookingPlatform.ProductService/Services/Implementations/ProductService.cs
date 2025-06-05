@@ -3,9 +3,7 @@ using CoreBookingPlatform.ProductService.Data.Context;
 using CoreBookingPlatform.ProductService.Models.DTOs;
 using CoreBookingPlatform.ProductService.Models.Entities;
 using CoreBookingPlatform.ProductService.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace CoreBookingPlatform.ProductService.Services.Implementations
 {
@@ -27,18 +25,21 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             using var transaction = await _productDbContext.Database.BeginTransactionAsync();
             try
             {
-                var existingProduct = await _productDbContext.Products
-                    .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
-                    .Include(p => p.Attributes)
-                    .Include(p => p.Contents)
-                    .FirstOrDefaultAsync(p =>
-                        p.ExternalId == dto.ExternalId &&
-                        p.ExternalSystemName == dto.ExternalSystemName);
-
-                if (existingProduct != null)
+                if (!string.IsNullOrWhiteSpace(dto.ExternalId) && !string.IsNullOrWhiteSpace(dto.ExternalSystemName))
                 {
-                    _logger.LogInformation("Product already exists. Returning existing product with ID: {ProductId}", existingProduct.ProductId);
-                    return null;
+                    var existingProduct = await _productDbContext.Products
+                        .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
+                        .Include(p => p.Attributes)
+                        .Include(p => p.Contents)
+                        .FirstOrDefaultAsync(p =>
+                            p.ExternalId == dto.ExternalId &&
+                            p.ExternalSystemName == dto.ExternalSystemName);
+
+                    if (existingProduct != null)
+                    {
+                        _logger.LogInformation("Product already exists. Returning existing product with ID: {ProductId}", existingProduct.ProductId);
+                        return null;
+                    }
                 }
 
                 var product = _mapper.Map<Product>(dto);
@@ -49,12 +50,13 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     .Select(c => (c.Name, c.Description))
                     .Distinct()
                     .ToList();
-                var existingCats = await _productDbContext.Categories
+
+                var existingCategories = await _productDbContext.Categories
                     .Where(c => descriptionList.Select(nd => nd.Name).Contains(c.Name))
                     .ToDictionaryAsync(c => c.Name, c => c);
 
                 var newCategories = descriptionList
-                    .Where(d => !existingCats.ContainsKey(d.Name))
+                    .Where(d => !existingCategories.ContainsKey(d.Name))
                     .Select(d => new Category
                     {
                         Name = d.Name,
@@ -62,28 +64,30 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     }).ToList();
+
                 _productDbContext.Categories.AddRange(newCategories);
                 await _productDbContext.SaveChangesAsync();
+
                 foreach (var category in newCategories)
                 {
-                    existingCats[category.Name] = category;
+                    existingCategories[category.Name] = category;
                 }
 
                 foreach (var (name, desc) in descriptionList)
                 {
                     product.ProductCategories.Add(new ProductCategory
                     {
-                        CategoryId = existingCats[name].CategoryId,
+                        CategoryId = existingCategories[name].CategoryId,
                         CreatedAt = DateTime.UtcNow
                     });
                 }
 
-                foreach (var attrDto in dto.Attributes)
+                foreach (var attributeDto in dto.Attributes)
                 {
                     product.Attributes.Add(new ProductAttribute
                     {
-                        Name = attrDto.Name,
-                        Value = attrDto.Value,
+                        Name = attributeDto.Name,
+                        Value = attributeDto.Value,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     });
@@ -112,7 +116,8 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     .Include(p => p.Attributes)
                     .Include(p => p.Contents)
                     .FirstOrDefaultAsync(p => p.ProductId == product.ProductId);
-                _logger.LogInformation("Product (and related data) created successfully with ID: {ProductId}", product.ProductId);
+
+                _logger.LogInformation("Product and related data created successfully with ID: {ProductId}", product.ProductId);
                 return _mapper.Map<ProductDto>(createdProduct);
             }
             catch (Exception ex)
@@ -122,7 +127,6 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                 throw;
             }
         }
-
 
         private async Task<List<int>> GetOrCreateCategoryIdsAsync(List<(string Name, string? Description)> categories)
         {
@@ -156,7 +160,6 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             return ids;
         }
 
-
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             try
@@ -164,8 +167,9 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                 var products = await _productDbContext.Products
                     .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
                     .Include(p => p.Attributes)
-                    .Include(p => p.Contents)
+                    .Include(p => p.Contents.OrderBy(c => c.SortOrder))
                     .ToListAsync();
+
                 return _mapper.Map<IEnumerable<ProductDto>>(products);
             }
             catch (Exception ex)
@@ -184,7 +188,16 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     .Include(p => p.Attributes)
                     .Include(p => p.Contents)
                     .FirstOrDefaultAsync(p => p.ProductId == id);
-                return product == null ? null : _mapper.Map<ProductDto>(product);
+
+                if (product == null)
+                {
+                    _logger.LogWarning("Product with ID {Id} not found", id);
+                    return null;
+                }
+                else
+                {
+                    return _mapper.Map<ProductDto>(product);
+                }
             }
             catch (Exception ex)
             {
@@ -195,15 +208,15 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
 
         public async Task<bool> UpdateProductAsync(int id, UpdateProductDto updateProductDto)
         {
-
             using var transaction = await _productDbContext.Database.BeginTransactionAsync();
             try
             {
                 var product = await _productDbContext.Products
                     .Include(p => p.ProductCategories)
-                    .Include(p => p.Attributes) 
+                    .Include(p => p.Attributes)
                     .Include(p => p.Contents)
                     .FirstOrDefaultAsync(p => p.ProductId == id);
+
                 if (product == null) return false;
 
                 _mapper.Map(updateProductDto, product);
@@ -211,11 +224,11 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
 
                 var categoryInput = updateProductDto.Categories
                     .Select(c => (Name: c.Name, Description: c.Description)).ToList();
-                var newCategoryIds = await GetOrCreateCategoryIdsAsync(categoryInput);
 
+                var newCategoryIds = await GetOrCreateCategoryIdsAsync(categoryInput);
                 var existingCategoryIds = product.ProductCategories.Select(pc => pc.CategoryId).ToList();
+
                 var categoriesToRemove = existingCategoryIds.Except(newCategoryIds).ToList();
-                
                 var categoriesToAdd = newCategoryIds.Except(existingCategoryIds).ToList();
 
                 foreach (var categoryId in categoriesToRemove)
@@ -223,39 +236,37 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     var pc = product.ProductCategories.First(pc => pc.CategoryId == categoryId);
                     product.ProductCategories.Remove(pc);
                 }
+
                 foreach (var categoryId in categoriesToAdd)
                 {
-                    product.ProductCategories.Add(new ProductCategory 
-                    {   CategoryId = categoryId,
+                    product.ProductCategories.Add(new ProductCategory
+                    {
+                        CategoryId = categoryId,
                         CreatedAt = DateTime.UtcNow
-                    
                     });
                 }
 
-                
-                
-                foreach (var attrDto in updateProductDto.Attributes)
+                foreach (var attributeDto in updateProductDto.Attributes)
                 {
-                    var existingAttr = product.Attributes.FirstOrDefault(a => a.Name == attrDto.Name);
+                    var existingAttr = product.Attributes.FirstOrDefault(a => a.Name == attributeDto.Name);
                     if (existingAttr != null)
                     {
-                        existingAttr.Value = attrDto.Value;
+                        existingAttr.Value = attributeDto.Value;
                         existingAttr.UpdatedAt = DateTime.UtcNow;
                     }
                     else
                     {
                         product.Attributes.Add(new ProductAttribute
                         {
-                            Name = attrDto.Name,
-                            Value = attrDto.Value,
+                            Name = attributeDto.Name,
+                            Value = attributeDto.Value,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow
-
                         });
                     }
                 }
-                
-                foreach(var contentDto in updateProductDto.Contents)
+
+                foreach (var contentDto in updateProductDto.Contents)
                 {
                     var existingContent = product.Contents.FirstOrDefault(c => c.ContentType == contentDto.ContentType && c.Title == contentDto.Title);
                     if (existingContent != null)
@@ -281,7 +292,6 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                             UpdatedAt = DateTime.UtcNow
                         });
                     }
-
                 }
 
                 await _productDbContext.SaveChangesAsync();
@@ -343,8 +353,10 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                 var content = _mapper.Map<ProductContent>(createContentDto);
                 content.CreatedAt = DateTime.UtcNow;
                 content.UpdatedAt = DateTime.UtcNow;
+
                 _productDbContext.ProductContent.Add(content);
                 await _productDbContext.SaveChangesAsync();
+
                 return _mapper.Map<ProductContentDto>(content);
             }
             catch (Exception ex)
@@ -359,11 +371,45 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             try
             {
                 var content = await _productDbContext.ProductContent.FindAsync(id);
-                return content == null ? null : _mapper.Map<ProductContentDto>(content);
+                if (content == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return _mapper.Map<ProductContentDto>(content);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving product content with ID {Id}", id);
+                throw;
+            }
+        }
+
+        public async Task<ProductContentDto> FindProductContentAsync(int productId, string contentType, string title)
+        {
+            try
+            {
+                var entity = await _productDbContext.ProductContent
+                    .Where(c => c.ProductId == productId
+                             && c.ContentType == contentType
+                             && c.Title == title)
+                    .FirstOrDefaultAsync();
+
+                if (entity == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return _mapper.Map<ProductContentDto>(entity);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in FindProductContentAsync(productId={ProductId}, contentType={ContentType}, title={Title}).",
+                                  productId, contentType, title);
                 throw;
             }
         }
@@ -374,8 +420,10 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             {
                 var content = await _productDbContext.ProductContent.FindAsync(id);
                 if (content == null) return false;
+
                 _mapper.Map(updateContentDto, content);
                 content.UpdatedAt = DateTime.UtcNow;
+
                 await _productDbContext.SaveChangesAsync();
                 return true;
             }
@@ -392,6 +440,7 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             {
                 var content = await _productDbContext.ProductContent.FindAsync(id);
                 if (content == null) return false;
+
                 _productDbContext.ProductContent.Remove(content);
                 await _productDbContext.SaveChangesAsync();
                 return true;
@@ -408,8 +457,8 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
             try
             {
                 var product = await _productDbContext.Products.FindAsync(id);
-                if (product == null)
-                    return false;
+                if (product == null) return false;
+
                 product.ProductName = dto.ProductName;
                 product.ProductDescription = dto.ProductDescription;
                 product.BasePrice = dto.BasePrice;
@@ -419,7 +468,6 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
 
                 await _productDbContext.SaveChangesAsync();
                 return true;
-
             }
             catch (Exception ex)
             {

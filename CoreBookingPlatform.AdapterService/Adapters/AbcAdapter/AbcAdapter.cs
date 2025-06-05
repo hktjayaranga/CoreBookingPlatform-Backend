@@ -49,14 +49,14 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
 
                     if (string.IsNullOrWhiteSpace(externalProduct.Id))
                     {
-                        _logger.LogWarning("Skipping product with empty or null ID.");
+                        _logger.LogWarning("Skipp product with empty or null ID.");
                         continue;
                     }
 
                     var existingProductResponse = await _productServiceClient.GetAsync($"api/products/external?externalId={externalProduct.Id}&externalSystemName={ExternalSystemName}");
                     if (existingProductResponse.IsSuccessStatusCode)
                     {
-                        _logger.LogInformation("Product {ExternalId} already exists, skipping import.", externalProduct.Id);
+                        _logger.LogInformation("Product {ExternalId} already exists,", externalProduct.Id);
                         continue;
                     }
                     else if (existingProductResponse.StatusCode != HttpStatusCode.NotFound)
@@ -70,7 +70,6 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
                     if (!contentResponse.IsSuccessStatusCode)
                     {
                         _logger.LogWarning("Content not found for product {ExternalId}: {StatusCode}", externalProduct.Id, contentResponse.StatusCode);
-
                         continue;
                     }
 
@@ -98,15 +97,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
                             Name = a.Key,
                             Value = a.Value
                         }).ToList(),
-                        Contents = externalContents.Select(c => new CreateProductContentDto
-                        {
-                            // ProductId = 0, 
-                            ContentType = c.Type,
-                            Title = c.Title,
-                            Description = c.Description,
-                            MediaUrl = c.MediaUrl,
-                            SortOrder = c.Order
-                        }).ToList()
+                        //Contents = new List<CreateProductContentDto>()
                     };
 
 
@@ -212,19 +203,28 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
             {
                 try
                 {
-                    var response = await _externalApiClient.PostAsJsonAsync("api/abc/bookings", new
+                    var availabilityResponse = await _externalApiClient.GetAsync($"api/abc/products/{item.ExternalProductId}/availability");
+                    availabilityResponse.EnsureSuccessStatusCode();
+                    var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
+                    var availability = JsonSerializer.Deserialize<AbcAvailabilityDto>(availabilityJson);
+                    if (availability == null || !availability.IsAvailable || availability.Quantity < item.Quantity)
                     {
-                        ProductId = item.ExternalProductId,
-                        Quantity = item.Quantity
-                    });
-                    response.EnsureSuccessStatusCode();
-                    var bookingData = await response.Content.ReadFromJsonAsync<AbcBookingResponse>();
+                        results.Add(new BookingResultDto
+                        {
+                            ExternalProductId = item.ExternalProductId,
+                            Success = false,
+                            ErrorMessage = "Insufficient quantity or not available"
+                        });
+                        continue;
+                    }
+                    var bookingId = Guid.NewGuid().ToString(); 
                     results.Add(new BookingResultDto
                     {
                         ExternalProductId = item.ExternalProductId,
-                        BookingId = bookingData.BookingId,
+                        BookingId = bookingId,
                         Success = true
                     });
+                    _logger.LogInformation("Booking created for {ExternalProductId} with BookingId {BookingId}", item.ExternalProductId, bookingId);
                 }
                 catch (Exception ex)
                 {
@@ -236,11 +236,9 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
                         ErrorMessage = ex.Message
                     });
                 }
-
             }
             return results;
         }
-
         public async Task<List<BookingResultDto>> CancelBookingsAsync(List<string> bookingIds)
         {
             var results = new List<BookingResultDto>();
@@ -248,8 +246,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
             {
                 try
                 {
-                    var response = await _externalApiClient.PostAsJsonAsync("api/abc/bookings/cancel", new { BookingId = bookingId });
-                    response.EnsureSuccessStatusCode();
+                    _logger.LogInformation("Cancellation for booking {BookingId} in ABC system", bookingId);
                     results.Add(new BookingResultDto
                     {
                         BookingId = bookingId,

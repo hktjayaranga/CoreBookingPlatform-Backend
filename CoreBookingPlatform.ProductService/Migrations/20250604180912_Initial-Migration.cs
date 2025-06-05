@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CoreBookingPlatform.ProductService.Migrations
 {
     /// <inheritdoc />
-    public partial class InititalMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,14 +33,14 @@ namespace CoreBookingPlatform.ProductService.Migrations
                 {
                     ProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ExternalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExternalId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BasePrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SKU = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AdapterId = table.Column<int>(type: "int", nullable: true),
-                    ExternalSystemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExternalSystemName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -145,6 +145,13 @@ namespace CoreBookingPlatform.ProductService.Migrations
                 name: "IX_ProductContent_ProductId",
                 table: "ProductContent",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ExternalId_ExternalSystemName",
+                table: "Products",
+                columns: new[] { "ExternalId", "ExternalSystemName" },
+                unique: true,
+                filter: "[ExternalId] IS NOT NULL AND [ExternalSystemName] IS NOT NULL");
         }
 
         /// <inheritdoc />

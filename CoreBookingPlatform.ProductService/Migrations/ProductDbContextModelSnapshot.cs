@@ -71,10 +71,10 @@ namespace CoreBookingPlatform.ProductService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExternalId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ExternalSystemName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("datetime2");
@@ -89,6 +89,10 @@ namespace CoreBookingPlatform.ProductService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("ExternalId", "ExternalSystemName")
+                        .IsUnique()
+                        .HasFilter("[ExternalId] IS NOT NULL AND [ExternalSystemName] IS NOT NULL");
 
                     b.ToTable("Products");
                 });

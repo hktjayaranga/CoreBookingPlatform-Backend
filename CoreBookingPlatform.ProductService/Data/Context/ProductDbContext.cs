@@ -82,6 +82,8 @@ namespace CoreBookingPlatform.ProductService.Data.Context
                  .HasIndex(p => new { p.ExternalId, p.ExternalSystemName })
                  .IsUnique();
 
+            
+
         }
 
 

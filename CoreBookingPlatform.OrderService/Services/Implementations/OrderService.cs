@@ -26,98 +26,82 @@ namespace CoreBookingPlatform.OrderService.Services.Implementations
             _cartServiceClient = httpClientFactory.CreateClient("CartService");
             _adapterServiceClient = httpClientFactory.CreateClient("AdapterService");
             _productServiceClient = httpClientFactory.CreateClient("ProductService");
+            _orderDbContext = orderDbContext;
             _mapper = mapper;
             _logger = logger;
         }
 
         public async Task<OrderDto> CreateOrderAsync(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("UserId cannot be null or empty");
+
             var cartResponse = await _cartServiceClient.GetAsync($"api/cart?userId={userId}");
-            if (cartResponse == null)
-            {
-                throw new Exception("Failed to get cart.");
-            }
+            if (!cartResponse.IsSuccessStatusCode)
+                throw new Exception($"Failed to get cart: {cartResponse.StatusCode}");
 
             var cartJson = await cartResponse.Content.ReadAsStringAsync();
-            var cart = JsonSerializer.Deserialize<CartDto>(cartJson);
-            if (cart == null)
-            {
-                throw new Exception("cart is empty");
-            }
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, options);
+            if (cart == null || !cart.Items.Any())
+                throw new Exception("Cannot create order with an empty cart");
 
-            //get product details
             var productIds = cart.Items.Select(i => i.ProductId).Distinct().ToList();
             var products = new List<ProductDto>();
             foreach (var productId in productIds)
             {
                 var productResponse = await _productServiceClient.GetAsync($"api/products/{productId}");
-                if (productResponse == null)
-                {
+                if (!productResponse.IsSuccessStatusCode)
                     throw new Exception($"Product {productId} not found");
-                }
                 var productJson = await productResponse.Content.ReadAsStringAsync();
-                var product = JsonSerializer.Deserialize<ProductDto>(productJson);
+                var product = JsonSerializer.Deserialize<ProductDto>(productJson, options);
                 if (product == null)
-                {
                     throw new Exception($"Failed to deserialize product {productId}");
-                }
                 products.Add(product);
             }
 
-            //group items by externa system
+            foreach (var product in products)
+            {
+                var availabilityResponse = await _adapterServiceClient.GetAsync($"api/Import/availability?externalId={product.ExternalId}&externalSystemName={product.ExternalSystemName}");
+                if (!availabilityResponse.IsSuccessStatusCode)
+                    throw new Exception($"Failed checking availability for product: {product.ProductId}");
+                var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
+                
+                var availability = JsonSerializer.Deserialize<ProductAvailabilityDto>(availabilityJson, options);
+                if (availability == null || availability.Quantity < cart.Items.First(i => i.ProductId == product.ProductId).Quantity)
+                    throw new Exception($"Insufficient quantity for product {product.ProductId}");
+            }
 
             var itemBySystem = products
                 .GroupBy(p => p.ExternalSystemName)
                 .ToDictionary(
                     g => g.Key,
                     g => cart.Items.Where(i => g.Any(p => p.ProductId == i.ProductId))
-                    .Select(i => new BookingItemDto
-                    {
-                        ExternalProductId = products.First(p => p.ProductId == i.ProductId).ExternalId,
-                        Quantity = i.Quantity,
-                    }).ToList()
+                        .Select(i => new BookingItemDto
+                        {
+                            ExternalProductId = products.First(p => p.ProductId == i.ProductId).ExternalId,
+                            Quantity = i.Quantity,
+                        }).ToList()
                 );
-
-            //availability check
-            foreach (var product in products)
-            {
-                var availabilityResponse = await _adapterServiceClient.GetAsync($"api/availability?externalId={product.ExternalId}&externalSystemName={product.ExternalSystemName}");
-                if (availabilityResponse == null)
-                {
-                    throw new Exception($"Failed checking availability product : {product.ProductId}");
-                }
-                var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
-                var availability = JsonSerializer.Deserialize<ProductAvailabilityDto>(availabilityJson);
-                if (availability == null)
-                {
-                    throw new Exception($"Product {product.ProductId} is not available");
-                }
-                var cartItem = cart.Items.First(i => i.ProductId == product.ProductId);
-                if (availability.Quantity < cartItem.Quantity)
-                    throw new Exception($"Insufficient quantitiy for product {product.ProductId}");
-            }
 
             var allBookingResults = new List<BookingResultDto>();
             foreach (var system in itemBySystem.Keys)
             {
                 var bookingItems = itemBySystem[system];
-                var bookingResponse = await _adapterServiceClient.PostAsJsonAsync($"api/bookings?externalSystemName={system}", bookingItems);
-                if (bookingResponse == null)
-                    throw new Exception("Failed to create booking for {system}");
+                var bookingResponse = await _adapterServiceClient.PostAsJsonAsync($"api/Import/bookings?externalSystemName={system}", bookingItems);
+                if (!bookingResponse.IsSuccessStatusCode)
+                    throw new Exception($"Failed to create booking for {system}");
                 var bookingResultJson = await bookingResponse.Content.ReadAsStringAsync();
-                var bookingResults = JsonSerializer.Deserialize<List<BookingResultDto>>(bookingResultJson);
+                var bookingResults = JsonSerializer.Deserialize<List<BookingResultDto>>(bookingResultJson, options);
                 if (bookingResults == null)
                     throw new Exception("Failed to deserialize booking results");
                 allBookingResults.AddRange(bookingResults);
             }
-            if (allBookingResults.Any(r => !r.Success))
-                throw new Exception("Some bookings are failed");
-
-            //create order
+            _logger.LogInformation("Booking results: {BookingResults}", JsonSerializer.Serialize(allBookingResults));
             var order = new Order
             {
                 UserId = userId,
-                Status = "Confirmed",
+                Status = allBookingResults.All(r => r.Success) ? "Confirmed" : "PartiallyConfirmed",
                 TotalPrice = cart.TotalPrice,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
@@ -126,18 +110,29 @@ namespace CoreBookingPlatform.OrderService.Services.Implementations
                     ProductId = i.ProductId,
                     Quantity = i.Quantity,
                     Price = i.Price,
-                    ExternalBookingId = allBookingResults.First(r => r.ExternalProductId == products.First(p => p.ProductId == i.ProductId).ExternalId).BookingId
+                    ExternalBookingId = allBookingResults.FirstOrDefault(r => r.ExternalProductId == products.First(p => p.ProductId == i.ProductId).ExternalId)?.BookingId ?? "N/A"
                 }).ToList()
             };
 
             _orderDbContext.Orders.Add(order);
             await _orderDbContext.SaveChangesAsync();
 
-            var clearCart = await _cartServiceClient.DeleteAsync($"api/cart?userId={userId}");
-            if (clearCart != null)
-                _logger.LogWarning("Faailed to clear cart");
-            return _mapper.Map<OrderDto>(order);
+            _logger.LogInformation("Order created successfully with OrderId {OrderId}", order.OrderId);
+            var orderDetails = new
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                Status = order.Status,
+                TotalPrice = order.TotalPrice,
+                Items = order.Items.Select(i => new { i.ProductId, i.Quantity, i.Price, i.ExternalBookingId }),
+                CreatedAt = order.CreatedAt
+            };
+            Console.WriteLine("Order Success Message Sent to External System:");
+            Console.WriteLine(JsonSerializer.Serialize(orderDetails, new JsonSerializerOptions { WriteIndented = true }));
 
+            var clearCartResponse = await _cartServiceClient.DeleteAsync($"api/cart?userId={userId}");
+
+            return _mapper.Map<OrderDto>(order);
         }
 
         public async Task<OrderDto> GetOrderByIdAsync(int id)
@@ -183,9 +178,15 @@ namespace CoreBookingPlatform.OrderService.Services.Implementations
                     throw new Exception($"Product {productId} not found");
                 }
                 var productJson = await productResponse.Content.ReadAsStringAsync();
-                var product = JsonSerializer.Deserialize<ProductDto>(productJson);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var product = JsonSerializer.Deserialize<ProductDto>(productJson, options);
                 if (product == null)
                     throw new Exception($"Failed to deserialize product {productId}.");
+                if (product.ProductId != productId)
+                {
+                    _logger.LogError("ProductId mismatch: requested {RequestedId}, received {ReceivedId}", productId, product.ProductId);
+                    throw new Exception($"ProductId mismatch: requested {productId}, received {product.ProductId}");
+                }
                 products.Add(product);
             }
 
@@ -199,10 +200,21 @@ namespace CoreBookingPlatform.OrderService.Services.Implementations
             {
                 var bookingIds = bookingsBySystem[system];
                 var cancelResponse = await _adapterServiceClient.PostAsJsonAsync(
-                    $"api/bookings/cancel?externalSystemName={system}", bookingIds);
+                    $"api/Import/bookings/cancel?externalSystemName={system}", bookingIds);
                 if (!cancelResponse.IsSuccessStatusCode)
+                {
                     _logger.LogWarning("Failed to cancel bookings for {System}", system);
-
+                }
+                else
+                {
+                    var cancelResultsJson = await cancelResponse.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var cancelResults = JsonSerializer.Deserialize<List<BookingResultDto>>(cancelResultsJson, options);
+                    _logger.LogInformation("Cancellation results for {System}: {CancelResults}",
+                        system, JsonSerializer.Serialize(cancelResults));
+                    Console.WriteLine($"Order cancellation response for {system}:");
+                    Console.WriteLine(JsonSerializer.Serialize(cancelResults, new JsonSerializerOptions { WriteIndented = true }));
+                }
             }
             order.Status = "Canceled";
             order.UpdatedAt = DateTime.UtcNow;
@@ -210,10 +222,90 @@ namespace CoreBookingPlatform.OrderService.Services.Implementations
             return true;
         }
 
-        
 
-        
 
-        
+        public async Task<AvailabilityCheckResultDto> CheckCartAvailabilityAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("UserId cannot be null or empty");
+
+            var cartResponse = await _cartServiceClient.GetAsync($"api/cart?userId={userId}");
+            if (!cartResponse.IsSuccessStatusCode)
+                throw new Exception("Failed to retrieve cart");
+
+            var cartJson = await cartResponse.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, options);
+            if (cart == null || !cart.Items.Any())
+            {
+                _logger.LogWarning("Cart for user {UserId} is empty or null", userId);
+                return new AvailabilityCheckResultDto { IsAvailable = false };
+            }
+
+            var productIds = cart.Items.Select(i => i.ProductId).Distinct().ToList();
+            var products = new List<ProductDto>();
+            var unavailableItems = new List<UnavailableItemDto>();
+            foreach (var productId in productIds)
+            {
+                var productResponse = await _productServiceClient.GetAsync($"api/products/{productId}");
+                if (!productResponse.IsSuccessStatusCode)
+                    throw new Exception($"Product {productId} not found");
+                var productJson = await productResponse.Content.ReadAsStringAsync();
+                var product = JsonSerializer.Deserialize<ProductDto>(productJson, options);
+                if (product == null)
+                    throw new Exception($"Failed to deserialize product {productId}");
+                products.Add(product);
+            }
+
+            foreach (var item in cart.Items)
+            {
+                var product = products.FirstOrDefault(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    unavailableItems.Add(new UnavailableItemDto { ProductId = item.ProductId, Reason = "Product not found" });
+                    continue;
+                }
+
+                var availabilityResponse = await _adapterServiceClient.GetAsync($"api/Import/availability?externalId={product.ExternalId}&externalSystemName={product.ExternalSystemName}");
+                if (!availabilityResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Availability check failed for product {ProductId}: Status={StatusCode}",
+                        item.ProductId, availabilityResponse.StatusCode);
+                    unavailableItems.Add(new UnavailableItemDto { ProductId = item.ProductId, Reason = "Availability check failed" });
+                    continue;
+                }
+
+                var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
+                
+                var availability = JsonSerializer.Deserialize<ProductAvailabilityDto>(availabilityJson, options);
+                if (availability == null)
+                {
+                    unavailableItems.Add(new UnavailableItemDto { ProductId = item.ProductId, Reason = "Deserialization failed" });
+                    continue;
+                }
+
+                if (!availability.IsAvailable || availability.Quantity < item.Quantity)
+                {
+                    unavailableItems.Add(new UnavailableItemDto { ProductId = item.ProductId, Reason = "Insufficient quantity" });
+                }
+            }
+
+            var result = new AvailabilityCheckResultDto
+            {
+                IsAvailable = unavailableItems.Count == 0,
+                UnavailableItems = unavailableItems
+            };
+
+            return result;
+        }
+
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
+        {
+           var orders = await _orderDbContext.Orders
+                .Include(o => o.Items)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+        }
     }
 }

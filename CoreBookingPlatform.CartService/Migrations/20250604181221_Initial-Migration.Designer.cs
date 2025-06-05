@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreBookingPlatform.CartService.Migrations
 {
     [DbContext(typeof(CartDbContext))]
-    [Migration("20250528113011_Initial-Migration")]
+    [Migration("20250604181221_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />

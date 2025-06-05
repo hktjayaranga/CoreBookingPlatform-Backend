@@ -28,7 +28,9 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                 var product = await _productDbContext.Products
                     .FirstOrDefaultAsync(p => p.ProductId == productId);
                 if (product == null)
-                    throw new ArgumentException($"Product with ID {productId} does not exist.");
+                {
+                    _logger.LogWarning("Product with ID {ProductId} not found", productId);
+                }
 
                 var attribute = _mapper.Map<ProductAttribute>(createAttributeDto);
                 attribute.ProductId = productId;

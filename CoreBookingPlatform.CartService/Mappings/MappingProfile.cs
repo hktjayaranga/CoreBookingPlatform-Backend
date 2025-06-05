@@ -7,8 +7,9 @@ namespace CoreBookingPlatform.CartService.Mappings
     public class MappingProfile : Profile
     {
         public MappingProfile() 
-        { 
-            CreateMap<Cart, CartDto>();
+        {
+            CreateMap<Cart, CartDto>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
             CreateMap<CartItem,  CartItemDto>();
         }
     }

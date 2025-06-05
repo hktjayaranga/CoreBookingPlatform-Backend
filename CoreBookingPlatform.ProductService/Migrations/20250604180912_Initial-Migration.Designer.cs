@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreBookingPlatform.ProductService.Migrations
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20250527052717_Initital-Migration")]
-    partial class InititalMigration
+    [Migration("20250604180912_Initial-Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,10 +74,10 @@ namespace CoreBookingPlatform.ProductService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExternalId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ExternalSystemName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("datetime2");
@@ -92,6 +92,10 @@ namespace CoreBookingPlatform.ProductService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("ExternalId", "ExternalSystemName")
+                        .IsUnique()
+                        .HasFilter("[ExternalId] IS NOT NULL AND [ExternalSystemName] IS NOT NULL");
 
                     b.ToTable("Products");
                 });

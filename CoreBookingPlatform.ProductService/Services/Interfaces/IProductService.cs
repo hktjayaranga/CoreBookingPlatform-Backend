@@ -12,6 +12,7 @@ namespace CoreBookingPlatform.ProductService.Services.Interfaces
         Task<bool> DeleteProductAsync(int id);
         Task<ProductContentDto> CreateProductContentAsync(CreateProductContentDto createContentDto);
         Task<ProductContentDto> GetProductContentByIdAsync(int id);
+        Task<ProductContentDto> FindProductContentAsync(int productId, string contentType, string title);
         Task<bool> UpdateProductContentAsync(int id, UpdateProductContentDto updateContentDto);
         Task<bool> DeleteProductContentAsync(int id);
     }

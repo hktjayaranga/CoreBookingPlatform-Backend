@@ -38,7 +38,11 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
                 }
                 var cart = await _cartDbContext.Carts
                     .Include(c => c.Items)
-                    .FirstOrDefaultAsync(c => c.UserId == userId) ?? new Models.Entities.Cart { UserId = userId };
+                    .FirstOrDefaultAsync(c => c.UserId == userId)
+                    ?? new Cart{
+                        UserId = userId,
+                        Items = new List<CartItem>() 
+                    };
                 if (cart.CartId == 0)
                 {
                     _cartDbContext.Carts.Add(cart);
@@ -82,10 +86,10 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
                 if (cart.CartId == 0)
                 {
                     _cartDbContext.Carts.Add(cart);
-                    await _cartDbContext.SaveChangesAsync();
+                    var rows =  await _cartDbContext.SaveChangesAsync();
+                    _logger.LogInformation("Saved changes, affected rows: {Rows}", rows);
                 }
 
-                //check existing items
                 var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == createCartItemDto.ProductId);
                 if (existingItem != null)
                 {

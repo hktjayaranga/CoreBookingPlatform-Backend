@@ -81,5 +81,19 @@ namespace CoreBookingPlatform.AdapterService.Controllers
             var results = await adapter.CreateBookingAsync(items);
             return Ok(results);
         }
+
+        [HttpPost("bookings/cancel")]
+        public async Task<IActionResult> CancelBookings([FromQuery] string externalSystemName, [FromBody] List<string> bookingIds)
+        {
+            var adapter = _adapters.FirstOrDefault(a => a.ExternalSystemName == externalSystemName);
+            if (adapter == null)
+            {
+                _logger.LogWarning("Adapter for {ExternalSystemName} not found.", externalSystemName);
+                return BadRequest("Invalid external system name.");
+            }
+
+            var results = await adapter.CancelBookingsAsync(bookingIds);
+            return Ok(results);
+        }
     }
 }

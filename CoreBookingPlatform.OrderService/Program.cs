@@ -3,6 +3,7 @@ using CoreBookingPlatform.OrderService.Mappings;
 using CoreBookingPlatform.OrderService.Services.Implementations;
 using CoreBookingPlatform.OrderService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Order Service API",
+        Version = "v1"
+    });
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];
+        return controllerName == "Order";
+    });
+});
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddLogging();

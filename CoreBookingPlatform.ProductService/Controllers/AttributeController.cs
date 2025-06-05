@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoreBookingPlatform.ProductService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/attribute")]
     [ApiController]
     public class AttributeController : ControllerBase
     {
@@ -26,36 +26,61 @@ namespace CoreBookingPlatform.ProductService.Controllers
             try
             {
                 var attribute = await _attributeService.CreateAttributeAsync(productId, createAttributeDto);
+                if (attribute == null)
+                {
+                    return NotFound();
+                }
                 return CreatedAtAction(nameof(GetAttributeById), new { productId, id = attribute.ProductAttributeId }, attribute);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid request to create attribute for product ID {ProductId}", productId);
-                return NotFound(ex.Message); // Use NotFound for invalid productId
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating attribute for product ID {ProductId}", productId);
-                return BadRequest("An error occurred while creating the attribute.");
+                return BadRequest();
             }
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ProductAttributeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<ProductAttributeDto>>> GetAllAttributes()
         {
-            var attributes = await _attributeService.GetAllAttributesAsync();
-            return Ok(attributes);
+            try
+            {
+                var attributes = await _attributeService.GetAllAttributesAsync();
+                if (attributes == null)
+                {
+                    return NotFound();
+                }
+                return Ok(attributes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching all attributes.");
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductAttributeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductAttributeDto>> GetAttributeById(int id)
         {
-            var attribute = await _attributeService.GetAttributeByIdAsync(id);
-            if (attribute == null) return NotFound();
-            return Ok(attribute);
+            try
+            {
+                var attribute = await _attributeService.GetAttributeByIdAsync(id);
+                if (attribute == null)
+                {
+                    return NotFound();
+                }
+                return Ok(attribute);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error fetching attribute with ID {id}.");
+                return BadRequest();
+            }
         }
 
         [HttpPut("{id}")]
@@ -67,11 +92,18 @@ namespace CoreBookingPlatform.ProductService.Controllers
             try
             {
                 var result = await _attributeService.UpdateAttributeAsync(id, updateAttributeDto);
-                if (!result) return NotFound();
-                return NoContent();
+                if (!result)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error updating attribute with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }
@@ -79,16 +111,24 @@ namespace CoreBookingPlatform.ProductService.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteAttribute(int id)
         {
             try
             {
                 var result = await _attributeService.DeleteAttributeAsync(id);
-                if (!result) return NotFound();
-                return NoContent();
+                if (!result)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return NoContent();
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error deleting attribute with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }

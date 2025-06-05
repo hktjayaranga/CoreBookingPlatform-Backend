@@ -16,12 +16,16 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Adapter Service API",
-        Version = "v1",
-        Description = "API for triggering product and content imports via adapters"
+        Version = "v1"
+    });
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];
+        return controllerName == "Import";
     });
 });
 
-//builder.Services.AddAdapterServices();
+
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAdapter, AbcAdapter>();
 builder.Services.AddScoped<IAdapter, CdeAdapter>();
@@ -49,7 +53,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddHostedService<StartupImportService>();
 
-//builder.Services.AddScoped<IAdapterService, AdapterService>();
+
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
