@@ -1,7 +1,5 @@
-﻿using CoreBookingPlatform.AdapterService.Adapters.AbcAdapter;
-using CoreBookingPlatform.AdapterService.Interfaces;
+﻿using CoreBookingPlatform.AdapterService.Interfaces;
 using CoreBookingPlatform.AdapterService.Models.DTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreBookingPlatform.AdapterService.Controllers
@@ -18,8 +16,9 @@ namespace CoreBookingPlatform.AdapterService.Controllers
             _adapters = adapters;
             _logger = logger;
         }
-        [HttpPost("products")]
-        public async Task<IActionResult> ImportProducts([FromQuery] string externalSystemName)
+
+        [HttpPost("products-and-content")]
+        public async Task<IActionResult> ImportProductsAndContent([FromQuery] string externalSystemName)
         {
             var adapter = _adapters.FirstOrDefault(a => a.ExternalSystemName == externalSystemName);
             if (adapter == null)
@@ -28,22 +27,8 @@ namespace CoreBookingPlatform.AdapterService.Controllers
                 return BadRequest("Invalid external system name.");
             }
 
-            await adapter.ImportProductsAsync();
-            return Ok($"Product import triggered for {externalSystemName}.");
-        }
-
-        [HttpPost("content/{externalProductId}")]
-        public async Task<IActionResult> ImportProductContent(string externalProductId, [FromQuery] string externalSystemName)
-        {
-            var adapter = _adapters.FirstOrDefault(a => a.ExternalSystemName == externalSystemName);
-            if (adapter == null)
-            {
-                _logger.LogWarning("Adapter for {ExternalSystemName} not found.", externalSystemName);
-                return BadRequest("Invalid external system name.");
-            }
-
-            await adapter.ImportProductContentAsync(externalProductId);
-            return Ok($"Content import triggered for product {externalProductId} for {externalSystemName}.");
+            await adapter.ImportProductsAndContentAsync();
+            return Ok($"Product and content import triggered for {externalSystemName}.");
         }
 
         [HttpGet("availability")]

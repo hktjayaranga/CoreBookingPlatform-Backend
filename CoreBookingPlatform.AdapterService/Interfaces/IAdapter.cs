@@ -6,8 +6,7 @@ namespace CoreBookingPlatform.AdapterService.Interfaces
     public interface IAdapter
     {
         string ExternalSystemName { get; }
-        Task ImportProductsAsync();
-        Task ImportProductContentAsync(string externalProductId);
+        Task ImportProductsAndContentAsync();
         Task<ProductAvailabilityDto> CheckAvailabilityAsync(string externalProductId);
         Task<List<BookingResultDto>> CreateBookingAsync(List<BookingItemDto> items);
         Task<List<BookingResultDto>> CancelBookingsAsync(List<string> bookingIds);

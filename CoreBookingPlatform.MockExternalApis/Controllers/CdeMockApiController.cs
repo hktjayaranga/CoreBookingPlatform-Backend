@@ -11,75 +11,104 @@ namespace CoreBookingPlatform.MockExternalApis.Controllers
         private readonly ILogger<CdeMockApiController> _logger;
         private readonly string _mockDataPath;
 
-        public CdeMockApiController(
-            ILogger<CdeMockApiController> logger,
-            IConfiguration configuration)
+        public CdeMockApiController(ILogger<CdeMockApiController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _mockDataPath = configuration["MockDataPath"] ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockData");
         }
+
         [HttpGet("Products")]
         public async Task<IActionResult> GetProduct()
         {
-            var filePath = Path.Combine(_mockDataPath, "cde-products.json");
-            if (!System.IO.File.Exists(filePath))
+            try
             {
-                _logger.LogWarning("CDE Mock API: Product data file not found at {Path}", filePath);
-                return NotFound("Mock data file not found");
-            }
+                _logger.LogInformation("CDE Mock API: Importing all products");
+                var filePath = Path.Combine(_mockDataPath, "cde-products.json");
+                if (!System.IO.File.Exists(filePath))
+                {
+                    _logger.LogWarning("CDE Mock API: Product data file not found at {Path}", filePath);
+                    return NotFound("Mock data file not found");
+                }
 
-            var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
-            var products = JsonSerializer.Deserialize<List<CdeProductDto>>(jsonData);
-            _logger.LogInformation("CDE Mock API: Returning {Count} products", products?.Count ?? 0);
-            return Ok(products);
+                var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
+                var products = JsonSerializer.Deserialize<List<CdeProductDto>>(jsonData);
+
+                _logger.LogInformation("CDE Mock API: Returning {Count} products", products?.Count ?? 0);
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "CDE Mock API: Error getting products");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet("products/{productId}/content")]
         public async Task<IActionResult> GetProductContent(string productId)
         {
-            var filePath = Path.Combine(_mockDataPath, "cde-product-content.json");
-            if (!System.IO.File.Exists(filePath))
+            try
             {
-                _logger.LogWarning("CDE Mock API: Content data file not found at {Path}", filePath);
-                return NotFound("Mock data file not found");
-            }
+                _logger.LogInformation("CDE Mock API: Fetching content for product {ProductId}", productId);
+                var filePath = Path.Combine(_mockDataPath, "cde-product-content.json");
 
-            var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
-            var allContent = JsonSerializer.Deserialize<Dictionary<string, List<CdeContentDto>>>(jsonData);
-            if (allContent == null || !allContent.TryGetValue(productId, out var content))
+                if (!System.IO.File.Exists(filePath))
+                {
+                    _logger.LogWarning("CDE Mock API: Content data file not found at {Path}", filePath);
+                    return NotFound("Mock data file not found");
+                }
+
+                var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
+                var allContent = JsonSerializer.Deserialize<Dictionary<string, List<CdeContentDto>>>(jsonData);
+
+                if (allContent == null || !allContent.TryGetValue(productId, out var content))
+                {
+                    _logger.LogWarning("CDE Mock API: No content found for product {ProductId}", productId);
+                    return NotFound($"No content for product {productId}");
+                }
+
+                _logger.LogInformation("CDE Mock API: Returning {Count} content items for product {ProductId}", content.Count, productId);
+                return Ok(content);
+            }
+            catch (Exception ex)
             {
-                _logger.LogWarning("CDE Mock API: No content for product {ProductId}", productId);
-                return NotFound($"No content for product {productId}");
+                _logger.LogError(ex, "CDE Mock API: Error getting content for product {ProductId}", productId);
+                return StatusCode(500, "Internal server error");
             }
-
-            _logger.LogInformation("CDE Mock API: Returning {Count} content items for product {ProductId}",content.Count, productId);
-
-            return Ok(content);
         }
 
         [HttpGet("products/{productId}/availability")]
         public async Task<IActionResult> GetProductAvailability(string productId)
         {
-            var filePath = Path.Combine(_mockDataPath, "cde-product-availability.json");
-            if (!System.IO.File.Exists(filePath))
+            try
             {
-                _logger.LogWarning("CDE Mock API: Availability data file not found at {Path}", filePath);
-                return NotFound("Availability data not found");
+                _logger.LogInformation("CDE Mock API: Fetching availability for product {ProductId}", productId);
+                var filePath = Path.Combine(_mockDataPath, "cde-product-availability.json");
+
+                if (!System.IO.File.Exists(filePath))
+                {
+                    _logger.LogWarning("CDE Mock API: Availability data file not found at {Path}", filePath);
+                    return NotFound("Availability data not found");
+                }
+
+                var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
+                var allAvailabilities = JsonSerializer.Deserialize<List<CdeAvailabilityDto>>(jsonData);
+                var availability = allAvailabilities?
+                    .FirstOrDefault(a => string.Equals(a.ProductId, productId, StringComparison.OrdinalIgnoreCase));
+
+                if (availability == null)
+                {
+                    _logger.LogWarning("CDE Mock API: No availability data found for product {ProductId}", productId);
+                    return NotFound($"No availability data for product {productId}");
+                }
+
+                _logger.LogInformation("CDE Mock API: Returning availability for product {ProductId}", productId);
+                return Ok(availability);
             }
-
-            var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
-            var allAvail = JsonSerializer.Deserialize<List<CdeAvailabilityDto>>(jsonData);
-            var availability = allAvail?
-                .FirstOrDefault(a => string.Equals(a.ProductId, productId, StringComparison.OrdinalIgnoreCase));
-
-            if (availability == null)
+            catch (Exception ex)
             {
-                _logger.LogWarning("CDE Mock API: No availability for product {ProductId}", productId);
-                return NotFound($"No availability data for product {productId}");
+                _logger.LogError(ex, "CDE Mock API: Error getting availability for product {ProductId}", productId);
+                return StatusCode(500, "Internal server error");
             }
-
-            _logger.LogInformation("CDE Mock API: Returning availability for product {ProductId}", productId);
-            return Ok(availability);
         }
 
         #region DTOs

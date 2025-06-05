@@ -61,11 +61,6 @@ namespace CoreBookingPlatform.MockExternalApis.Controllers
 
                 var jsonData = await System.IO.File.ReadAllTextAsync(filePath);
 
-
-                //var options = new JsonSerializerOptions
-                //{
-                //    PropertyNameCaseInsensitive = true,
-                //};
                 var allContent = JsonSerializer.Deserialize<List<AbcContentDto>>(jsonData);
                 if (allContent == null)
                 {

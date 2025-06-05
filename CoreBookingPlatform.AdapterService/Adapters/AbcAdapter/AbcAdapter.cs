@@ -25,8 +25,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
 
             _logger = logger;
         }
-
-        public async Task ImportProductsAsync()
+        public async Task ImportProductsAndContentAsync()
         {
             try
             {
@@ -46,10 +45,9 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
 
                 foreach (var externalProduct in externalProducts)
                 {
-
                     if (string.IsNullOrWhiteSpace(externalProduct.Id))
                     {
-                        _logger.LogWarning("Skipp product with empty or null ID.");
+                        _logger.LogWarning("Skipping product with empty or null ID.");
                         continue;
                     }
 
@@ -76,7 +74,6 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
                     var contentJson = await contentResponse.Content.ReadAsStringAsync();
                     var externalContents = JsonSerializer.Deserialize<List<AbcContentDto>>(contentJson) ?? new List<AbcContentDto>();
 
-
                     var createProductDto = new CreateProductDto
                     {
                         ProductName = externalProduct.Name,
@@ -97,78 +94,27 @@ namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
                             Name = a.Key,
                             Value = a.Value
                         }).ToList(),
-                        //Contents = new List<CreateProductContentDto>()
+                        Contents = externalContents.Select(content => new CreateProductContentDto
+                        {
+                            ContentType = content.Type,
+                            Title = content.Title,
+                            Description = content.Description,
+                            MediaUrl = content.MediaUrl,
+                            SortOrder = content.Order
+                        }).ToList()
                     };
-
 
                     var productJson = JsonSerializer.Serialize(createProductDto);
                     var content = new StringContent(productJson, Encoding.UTF8, "application/json");
                     var productResponse = await _productServiceClient.PostAsync("api/products", content);
                     productResponse.EnsureSuccessStatusCode();
 
-                    _logger.LogInformation("Successfully imported product {ExternalId} from ABC.", externalProduct.Id);
+                    _logger.LogInformation("Successfully imported product {ExternalId} and its content from ABC.", externalProduct.Id);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error importing products from ABC external API.");
-                throw;
-            }
-        }
-        public async Task ImportProductContentAsync(string externalProductId)
-        {
-            try
-            {
-                var productResponse = await _productServiceClient.GetAsync($"api/products/external?externalId={externalProductId}&externalSystemName={ExternalSystemName}");
-
-                if (!productResponse.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Product {ExternalId} not found in product service.", externalProductId);
-                    return;
-                }
-                var productJson = await productResponse.Content.ReadAsStringAsync();
-                var product = JsonSerializer.Deserialize<ProductDto>(productJson);
-                if (product == null)
-                {
-                    _logger.LogWarning("Failed to deserialize product {ExternalId}.", externalProductId);
-                    return;
-                }
-
-    
-                var contentResponse = await _externalApiClient.GetAsync($"api/abc/products/{externalProductId}/content");
-                contentResponse.EnsureSuccessStatusCode();
-                var contentJson = await contentResponse.Content.ReadAsStringAsync();
-                var externalContents = JsonSerializer.Deserialize<List<AbcContentDto>>(contentJson) ?? new List<AbcContentDto>();
-
-                if (!externalContents.Any())
-                {
-                    _logger.LogWarning("No content found for product {ExternalId}.", externalProductId);
-                    return;
-                }
-
-                foreach (var content in externalContents)
-                {
-                    var createContentDto = new CreateProductContentDto
-                    {
-                        ProductId = product.ProductId,
-                        ContentType = content.Type,
-                        Title = content.Title,
-                        Description = content.Description,
-                        MediaUrl = content.MediaUrl,
-                        SortOrder = content.Order
-                    };
-
-                    var contentJsonData = JsonSerializer.Serialize(createContentDto);
-                    var contentPayload = new StringContent(contentJsonData, Encoding.UTF8, "application/json");
-                    var response = await _productServiceClient.PostAsync("api/products/content", contentPayload);
-                    response.EnsureSuccessStatusCode();
-
-                    _logger.LogInformation("Imported content for product {ExternalId}.", externalProductId);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error importing content for product {ExternalId}.", externalProductId);
+                _logger.LogError(ex, "Error importing products and content from ABC external API.");
                 throw;
             }
         }

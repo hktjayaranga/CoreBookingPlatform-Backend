@@ -31,11 +31,7 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
             {
                 if (string.IsNullOrEmpty(userId))
                     throw new ArgumentException("UserId cannot be null or empty.");
-                var user = await _cartDbContext.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    throw new Exception($"User with ID {userId} not found.");
-                }
+                await ValidateUserAsync(userId);
                 var cart = await _cartDbContext.Carts
                     .Include(c => c.Items)
                     .FirstOrDefaultAsync(c => c.UserId == userId)
@@ -65,12 +61,8 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
         {
             try
             {
-                var user = await _cartDbContext.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    throw new Exception($"User with ID {userId} not found.");
-                }
-                //get product details form product service
+                await ValidateUserAsync(userId);
+
                 var productResponse = await _productServiceClient.GetAsync($"api/products/{createCartItemDto.ProductId}");
                 if (!productResponse.IsSuccessStatusCode)
                     throw new Exception("Product not found in ProductService.");
@@ -87,7 +79,6 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
                 {
                     _cartDbContext.Carts.Add(cart);
                     var rows =  await _cartDbContext.SaveChangesAsync();
-                    _logger.LogInformation("Saved changes, affected rows: {Rows}", rows);
                 }
 
                 var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == createCartItemDto.ProductId);
@@ -128,9 +119,7 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
         {
             try
             {
-                var user = await _cartDbContext.Users.FindAsync(userId);
-                if (user == null)
-                    throw new Exception($"User with ID {userId} not found.");
+                await ValidateUserAsync(userId);
 
                 var cart = await _cartDbContext.Carts
                     .Include(c => c.Items)
@@ -157,11 +146,7 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
         {
             try
             {
-                var user = await _cartDbContext.Users.FindAsync(userId);
-                if(user == null)
-                {
-                    throw new Exception($"User with ID {userId} not found.");
-                }
+                await ValidateUserAsync(userId);
 
                 var cart = await _cartDbContext.Carts
                     .Include(c => c.Items)
@@ -187,9 +172,7 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
         {
             try
             {
-                var user = await _cartDbContext.Users.FindAsync(userId);
-                if (user == null)
-                    throw new Exception($"User with ID {userId} not found.");
+                await ValidateUserAsync(userId);
                 var cart = await _cartDbContext.Carts
                     .Include(c => c.Items)
                     .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -207,10 +190,17 @@ namespace CoreBookingPlatform.CartService.Services.Implementations
             }
         }
 
-        
+        private async Task<User> ValidateUserAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("UserId cannot be null or empty.");
 
-        
+            var user = await _cartDbContext.Users.FindAsync(userId);
+            if (user == null)
+                throw new Exception($"User with ID {userId} not found.");
 
-        
+            return user;
+        }
+
     }
 }

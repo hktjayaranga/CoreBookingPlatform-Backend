@@ -34,7 +34,7 @@ namespace CoreBookingPlatform.AdapterService.Services
                 foreach (var adapter in adapters)
                 {
                     _logger.LogInformation("Importing data for {ExternalSystemName}", adapter.ExternalSystemName);
-                    await adapter.ImportProductsAsync();
+                    await adapter.ImportProductsAndContentAsync();
                 }
             });
 

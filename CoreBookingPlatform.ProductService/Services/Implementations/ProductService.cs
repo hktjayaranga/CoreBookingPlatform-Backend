@@ -38,7 +38,7 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     if (existingProduct != null)
                     {
                         _logger.LogInformation("Product already exists. Returning existing product with ID: {ProductId}", existingProduct.ProductId);
-                        return null;
+                        return _mapper.Map<ProductDto>(existingProduct);
                     }
                 }
 
@@ -93,21 +93,43 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
                     });
                 }
 
-                foreach (var contentDto in dto.Contents ?? Enumerable.Empty<CreateProductContentDto>())
-                {
-                    product.Contents.Add(new ProductContent
-                    {
-                        ContentType = contentDto.ContentType,
-                        Title = contentDto.Title,
-                        Description = contentDto.Description,
-                        MediaUrl = contentDto.MediaUrl,
-                        SortOrder = contentDto.SortOrder,
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    });
-                }
+                var contentDtos = dto.Contents?.ToList() ?? new List<CreateProductContentDto>();
+                product.Contents.Clear();
 
                 _productDbContext.Products.Add(product);
+                await _productDbContext.SaveChangesAsync();
+
+                foreach (var contentDto in contentDtos)
+                {
+                    var existingContent = await _productDbContext.ProductContent
+                        .FirstOrDefaultAsync(c => c.ProductId == product.ProductId &&
+                                             c.ContentType == contentDto.ContentType &&
+                                             c.Title == contentDto.Title);
+
+                    if (existingContent == null)
+                    {
+                        var content = new ProductContent
+                        {
+                            ProductId = product.ProductId,
+                            ContentType = contentDto.ContentType,
+                            Title = contentDto.Title,
+                            Description = contentDto.Description,
+                            MediaUrl = contentDto.MediaUrl,
+                            SortOrder = contentDto.SortOrder,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+                        _productDbContext.ProductContent.Add(content);
+                        product.Contents.Add(content);
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Content already exists for product {ProductId} with type {ContentType} and title {Title}.",
+                            product.ProductId, contentDto.ContentType, contentDto.Title);
+                        product.Contents.Add(existingContent);
+                    }
+                }
+
                 await _productDbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -350,6 +372,19 @@ namespace CoreBookingPlatform.ProductService.Services.Implementations
         {
             try
             {
+                // Check if content already exists
+                var existingContent = await _productDbContext.ProductContent
+                    .FirstOrDefaultAsync(c => c.ProductId == createContentDto.ProductId &&
+                                        c.ContentType == createContentDto.ContentType &&
+                                        c.Title == createContentDto.Title);
+
+                if (existingContent != null)
+                {
+                    _logger.LogInformation("Content already exists for product {ProductId} with type {ContentType} and title {Title}.",
+                        createContentDto.ProductId, createContentDto.ContentType, createContentDto.Title);
+                    return _mapper.Map<ProductContentDto>(existingContent);
+                }
+
                 var content = _mapper.Map<ProductContent>(createContentDto);
                 content.CreatedAt = DateTime.UtcNow;
                 content.UpdatedAt = DateTime.UtcNow;
