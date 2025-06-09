@@ -2,7 +2,6 @@
 using CoreBookingPlatform.OrderService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CoreBookingPlatform.OrderService.Controllers
 {

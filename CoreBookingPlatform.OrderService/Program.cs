@@ -2,6 +2,7 @@ using CoreBookingPlatform.OrderService.Data.Context;
 using CoreBookingPlatform.OrderService.Mappings;
 using CoreBookingPlatform.OrderService.Services.Implementations;
 using CoreBookingPlatform.OrderService.Services.Interfaces;
+using CoreBookingPlatform.ProductService.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -49,6 +50,12 @@ builder.Services.AddHttpClient("AdapterService", client =>
 });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+    db.Database.Migrate();
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

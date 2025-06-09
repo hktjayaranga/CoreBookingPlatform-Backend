@@ -1,20 +1,62 @@
 [
   {
-    "productId": "ABC-001",
+    "productId": "TOUR-001",
+    "isAvailable": true,
+    "quantity": 25,
+    "price": 35.00
+  },
+  {
+    "productId": "TOUR-002",
+    "isAvailable": true,
+    "quantity": 15,
+    "price": 60.00
+  },
+  {
+    "productId": "TOUR-003",
+    "isAvailable": true,
+    "quantity": 20,
+    "price": 50.00
+  },
+  {
+    "productId": "TOUR-004",
+    "isAvailable": true,
+    "quantity": 18,
+    "price": 40.00
+  },
+  {
+    "productId": "TOUR-005",
+    "isAvailable": true,
+    "quantity": 30,
+    "price": 30.00
+  },
+  {
+    "productId": "TOUR-006",
+    "isAvailable": true,
+    "quantity": 40,
+    "price": 25.00
+  },
+  {
+    "productId": "TOUR-007",
+    "isAvailable": true,
+    "quantity": 12,
+    "price": 45.00
+  },
+  {
+    "productId": "TOUR-008",
     "isAvailable": true,
     "quantity": 10,
-    "price": 49.99
+    "price": 75.00
   },
   {
-    "productId": "ABC-002",
-    "isAvailable": false,
-    "quantity": 0,
-    "price": 79.99
-  },
-  {
-    "productId": "ABC-003",
+    "productId": "TOUR-009",
     "isAvailable": true,
-    "quantity": 5,
-    "price": 24.99
+    "quantity": 22,
+    "price": 55.00
+  },
+  {
+    "productId": "TOUR-010",
+    "isAvailable": true,
+    "quantity": 28,
+    "price": 28.00
   }
 ]

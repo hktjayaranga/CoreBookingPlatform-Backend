@@ -1,0 +1,140 @@
+version: "3.8"
+
+services:
+  ui-web:
+    build:
+      context: ../../Core-Booking-Platform-Website
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:5065
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - default
+  ui-admin:
+    build:
+      context: ../../Core-Booking-Platform-Frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:5065
+    ports:
+      - "3001:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - default
+  product-service:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.ProductService/Dockerfile
+    ports:
+      - "5215:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ProductServiceDB;User Id=sa;Password=MyStr0ngP@ssw0rd2023;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  cart-service:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.CartService/Dockerfile
+    ports:
+      - "5285:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=CartServiceDB;User Id=sa;Password=MyStr0ngP@ssw0rd2023;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True
+      - ProductService__BaseUrl=http://product-service:8080/
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
+  order-service:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.OrderService/Dockerfile
+    ports:
+      - "5080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=OrderServiceDB;User Id=sa;Password=MyStr0ngP@ssw0rd2023;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True
+      - CartService__BaseUrl=http://cart-service:8080/
+      - AdapterService__BaseUrl=http://adapter-service:8080/
+      - ProductService__BaseUrl=http://product-service:8080/
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      cart-service:
+        condition: service_started
+      adapter-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+
+  adapter-service:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.AdapterService/Dockerfile
+    ports:
+      - "5078:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ExternalApis__Abc__BaseUrl=http://mock-external-apis:8080/
+      - ExternalApis__Cde__BaseUrl=http://mock-external-apis:8080/
+      - ProductService__BaseUrl=http://product-service:8080/
+    depends_on:
+      mock-external-apis:
+        condition: service_started
+      product-service:
+        condition: service_started
+
+  mock-external-apis:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.MockExternalApis/Dockerfile
+    ports:
+      - "5069:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+
+  api-gateway:
+    build:
+      context: ./
+      dockerfile: CoreBookingPlatform.ApiGateway/Dockerfile
+    ports:
+      - "5065:8080"
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+    depends_on:
+      - product-service
+      - cart-service
+      - order-service
+      - adapter-service
+
+  sqlserver:
+    # image: mcr.microsoft.com/mssql/server:2022-latest
+    build:
+          context: ./
+          dockerfile: Dockerfile.mssql-tools
+    environment:
+      - SA_PASSWORD=MyStr0ngP@ssw0rd2023
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "MyStr0ngP@ssw0rd2023", "-Q", "SELECT 1"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 60s
+
+
+volumes:
+  sqlserver-data:

@@ -1,3 +1,83 @@
+//{
+//  "Routes": [
+//    {
+//      "DownstreamPathTemplate": "/api/products/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5215
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/products/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    },
+//    {
+//      "DownstreamPathTemplate": "/api/attribute/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5215
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/attribute/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    },
+//    {
+//      "DownstreamPathTemplate": "/api/category/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5215
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/category/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    },
+//    {
+//      "DownstreamPathTemplate": "/api/orders/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5080
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/orders/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    },
+//    {
+//      "DownstreamPathTemplate": "/api/cart/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5285
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/cart/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    },
+//    {
+//      "DownstreamPathTemplate": "/api/import/{everything}",
+//      "DownstreamScheme": "http",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 5078
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/import/{everything}",
+//      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+//    }
+//  ],
+//  "GlobalConfiguration": {
+//    "BaseUrl": "http://localhost:5065"
+//  }
+//}
+
 {
   "Routes": [
     {
@@ -5,8 +85,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5215
+          "Host": "product-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/products/{everything}",
@@ -17,8 +97,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5215
+          "Host": "product-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/attribute/{everything}",
@@ -29,8 +109,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5215
+          "Host": "product-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/category/{everything}",
@@ -41,8 +121,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5080
+          "Host": "order-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/orders/{everything}",
@@ -53,8 +133,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5285
+          "Host": "cart-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/cart/{everything}",
@@ -65,8 +145,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5078
+          "Host": "adapter-service",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/import/{everything}",

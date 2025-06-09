@@ -1,53 +1,182 @@
 [
   {
-    "Id": "CDE-101",
-    "Name": "Sunset Sailing Cruise",
-    "Description": "Enjoy a beautiful sunset while sailing along the coast",
-    "Price": 89.99,
+    "Id": "HOTEL-001-STANDARD",
+    "Name": "Standard Room - Oceanfront Hotel",
+    "Description": "A cozy room with a queen bed and garden views.",
+    "Price": 120.00,
     "Currency": "USD",
-    "SKU": "CRUISE-SUNSET-101",
+    "SKU": "ROOM-STANDARD-001",
     "Categories": {
-      "Water Activities": "Recreational experiences on lakes, rivers, or seas.",
-      "Cruises": "Leisure trips on a boat or ship, often with scenic routes."
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
     },
     "Attributes": {
-      "Duration": "2 hours",
-      "Includes": "Drinks, Light snacks",
-      "Departure": "Marina Bay"
+      "BedConfiguration": "Queen",
+      "MaxOccupancy": "2 adults",
+      "Amenities": "WiFi, TV",
+      "HotelId": "HOTEL-001"
     }
   },
   {
-    "Id": "CDE-102",
-    "Name": "Wine Tasting Tour",
-    "Description": "Visit local wineries and taste premium wines with expert guides",
-    "Price": 129.99,
+    "Id": "HOTEL-001-DELUXE",
+    "Name": "Deluxe Room - Oceanfront Hotel",
+    "Description": "A luxurious room with a king bed and ocean views.",
+    "Price": 180.00,
     "Currency": "USD",
-    "SKU": "TOUR-WINE-102",
+    "SKU": "ROOM-DELUXE-001",
     "Categories": {
-      "Food & Drink": "Experiences centered around culinary delights and beverages.",
-      "Guided Tours": "Tours led by knowledgeable guides providing local insights."
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
     },
     "Attributes": {
-      "Duration": "5 hours",
-      "Includes": "Transportation, Tastings at 3 wineries",
-      "Minimum Age": "21"
+      "BedConfiguration": "King",
+      "MaxOccupancy": "2 adults, 1 child",
+      "Amenities": "WiFi, TV, Minibar, Balcony",
+      "HotelId": "HOTEL-001"
     }
   },
   {
-    "Id": "CDE-103",
-    "Name": "Helicopter City Tour",
-    "Description": "See the city from above with our exclusive helicopter tour",
-    "Price": 299.99,
+    "Id": "HOTEL-001-SUITE",
+    "Name": "Executive Suite - Oceanfront Hotel",
+    "Description": "A spacious suite with separate living area and premium amenities.",
+    "Price": 250.00,
     "Currency": "USD",
-    "SKU": "TOUR-HELI-103",
+    "SKU": "ROOM-SUITE-001",
     "Categories": {
-      "Air Tours": "Scenic flights offering aerial views of landmarks.",
-      "Luxury Experiences": "High-end, premium activities for an exclusive feel."
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
     },
     "Attributes": {
-      "Duration": "30 minutes",
-      "Capacity": "3 passengers",
-      "Includes": "Champagne welcome"
+      "BedConfiguration": "King",
+      "MaxOccupancy": "4 adults",
+      "Amenities": "WiFi, TV, Minibar, Jacuzzi, Balcony",
+      "HotelId": "HOTEL-001"
+    }
+  },
+  {
+    "Id": "HOTEL-002-STANDARD",
+    "Name": "Standard Room - City Center Inn",
+    "Description": "A comfortable room with a double bed in the heart of the city.",
+    "Price": 90.00,
+    "Currency": "USD",
+    "SKU": "ROOM-STANDARD-002",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "Double",
+      "MaxOccupancy": "2 adults",
+      "Amenities": "WiFi, TV",
+      "HotelId": "HOTEL-002"
+    }
+  },
+  {
+    "Id": "HOTEL-002-DELUXE",
+    "Name": "Deluxe Room - City Center Inn",
+    "Description": "An upgraded room with a queen bed and city views.",
+    "Price": 130.00,
+    "Currency": "USD",
+    "SKU": "ROOM-DELUXE-002",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "Queen",
+      "MaxOccupancy": "2 adults, 1 child",
+      "Amenities": "WiFi, TV, Minibar",
+      "HotelId": "HOTEL-002"
+    }
+  },
+  {
+    "Id": "HOTEL-002-FAMILY",
+    "Name": "Family Room - City Center Inn",
+    "Description": "A large room with two queen beds, perfect for families.",
+    "Price": 160.00,
+    "Currency": "USD",
+    "SKU": "ROOM-FAMILY-002",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "Two Queens",
+      "MaxOccupancy": "4 adults",
+      "Amenities": "WiFi, TV, Microwave",
+      "HotelId": "HOTEL-002"
+    }
+  },
+  {
+    "Id": "HOTEL-003-STANDARD",
+    "Name": "Standard Room - Mountain Lodge",
+    "Description": "A rustic room with a double bed and mountain views.",
+    "Price": 100.00,
+    "Currency": "USD",
+    "SKU": "ROOM-STANDARD-003",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "Double",
+      "MaxOccupancy": "2 adults",
+      "Amenities": "WiFi, TV, Fireplace",
+      "HotelId": "HOTEL-003"
+    }
+  },
+  {
+    "Id": "HOTEL-003-DELUXE",
+    "Name": "Deluxe Room - Mountain Lodge",
+    "Description": "A cozy room with a king bed and a private balcony.",
+    "Price": 150.00,
+    "Currency": "USD",
+    "SKU": "ROOM-DELUXE-003",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "King",
+      "MaxOccupancy": "2 adults",
+      "Amenities": "WiFi, TV, Fireplace, Balcony",
+      "HotelId": "HOTEL-003"
+    }
+  },
+  {
+    "Id": "HOTEL-003-SUITE",
+    "Name": "Luxury Suite - Mountain Lodge",
+    "Description": "A premium suite with a king bed, living area, and stunning views.",
+    "Price": 220.00,
+    "Currency": "USD",
+    "SKU": "ROOM-SUITE-003",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "King",
+      "MaxOccupancy": "4 adults",
+      "Amenities": "WiFi, TV, Fireplace, Jacuzzi, Balcony",
+      "HotelId": "HOTEL-003"
+    }
+  },
+  {
+    "Id": "HOTEL-003-CABIN",
+    "Name": "Private Cabin - Mountain Lodge",
+    "Description": "A secluded cabin with two bedrooms and a kitchenette.",
+    "Price": 200.00,
+    "Currency": "USD",
+    "SKU": "ROOM-CABIN-003",
+    "Categories": {
+      "Accommodation": "Overnight lodging options",
+      "Hotels": "Full-service lodging with amenities"
+    },
+    "Attributes": {
+      "BedConfiguration": "Two Queens",
+      "MaxOccupancy": "4 adults",
+      "Amenities": "WiFi, TV, Kitchenette, Fireplace",
+      "HotelId": "HOTEL-003"
     }
   }
 ]

@@ -1,20 +1,62 @@
 [
   {
-    "productId": "CDE-101",
+    "productId": "HOTEL-001-STANDARD",
     "isAvailable": true,
-    "quantity": 8,
-    "price": 89.99
+    "quantity": 10,
+    "price": 120.00
   },
   {
-    "productId": "CDE-102",
+    "productId": "HOTEL-001-DELUXE",
+    "isAvailable": true,
+    "quantity": 5,
+    "price": 180.00
+  },
+  {
+    "productId": "HOTEL-001-SUITE",
+    "isAvailable": true,
+    "quantity": 2,
+    "price": 250.00
+  },
+  {
+    "productId": "HOTEL-002-STANDARD",
     "isAvailable": true,
     "quantity": 15,
-    "price": 129.99
+    "price": 90.00
   },
   {
-    "productId": "CDE-103",
-    "isAvailable": false,
-    "quantity": 0,
-    "price": 299.99
+    "productId": "HOTEL-002-DELUXE",
+    "isAvailable": true,
+    "quantity": 8,
+    "price": 130.00
+  },
+  {
+    "productId": "HOTEL-002-FAMILY",
+    "isAvailable": true,
+    "quantity": 4,
+    "price": 160.00
+  },
+  {
+    "productId": "HOTEL-003-STANDARD",
+    "isAvailable": true,
+    "quantity": 12,
+    "price": 100.00
+  },
+  {
+    "productId": "HOTEL-003-DELUXE",
+    "isAvailable": true,
+    "quantity": 6,
+    "price": 150.00
+  },
+  {
+    "productId": "HOTEL-003-SUITE",
+    "isAvailable": true,
+    "quantity": 3,
+    "price": 220.00
+  },
+  {
+    "productId": "HOTEL-003-CABIN",
+    "isAvailable": true,
+    "quantity": 2,
+    "price": 200.00
   }
 ]

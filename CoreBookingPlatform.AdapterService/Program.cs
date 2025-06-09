@@ -27,8 +27,12 @@ builder.Services.AddSwaggerGen(c =>
 
 
 builder.Services.AddHttpClient();
+
+
 builder.Services.AddScoped<IAdapter, AbcAdapter>();
 builder.Services.AddScoped<IAdapter, CdeAdapter>();
+
+
 builder.Services.AddHttpClient("AbcApi", c => {
     c.BaseAddress = new Uri(builder.Configuration["ExternalApis:Abc:BaseUrl"]!.TrimEnd('/') + "/");
 });

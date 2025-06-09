@@ -1,74 +1,162 @@
 [
   {
-    "productId": "ABC-001",
+    "productId": "TOUR-001",
     "type": "Description",
-    "title": "City Sightseeing Tour",
-    "description": "Explore the city's main attractions with our guided tour. Visit historical landmarks, beautiful parks, and iconic buildings. Our experienced guides will share fascinating stories and historical facts.",
+    "title": "Tour Highlights",
+    "description": "Visit historic landmarks, local markets, and enjoy a storytelling experience from our guides.",
     "mediaUrl": null,
     "order": 1
   },
   {
-    "productId": "ABC-001",
+    "productId": "TOUR-001",
     "type": "Image",
-    "title": "Tour Bus",
+    "title": "Historic District",
     "description": null,
-    "mediaUrl": "https://example.com/images/city-tour-bus.jpg",
+    "mediaUrl": "https://example.com/images/historic-district.jpg",
     "order": 2
   },
   {
-    "productId": "ABC-001",
-    "type": "Image",
-    "title": "City Panorama",
-    "description": null,
-    "mediaUrl": "https://example.com/images/city-panorama.jpg",
-    "order": 3
-  },
-  {
-    "productId": "ABC-002",
+    "productId": "TOUR-002",
     "type": "Description",
-    "title": "Mountain Hiking Adventure",
-    "description": "Experience the beauty of nature with our mountain hiking tour. Trek through scenic trails, enjoy breathtaking views, and connect with nature. Suitable for moderately fit individuals.",
+    "title": "Trek Overview",
+    "description": "Trek through lush forests and enjoy panoramic mountain views with a packed lunch included.",
     "mediaUrl": null,
     "order": 1
   },
   {
-    "productId": "ABC-002",
+    "productId": "TOUR-002",
     "type": "Image",
-    "title": "Mountain Trail",
+    "title": "Mountain View",
     "description": null,
-    "mediaUrl": "https://example.com/images/mountain-trail.jpg",
+    "mediaUrl": "https://example.com/images/mountain-view.jpg",
     "order": 2
   },
   {
-    "productId": "ABC-002",
-    "type": "Video",
-    "title": "Hiking Experience",
-    "description": null,
-    "mediaUrl": "https://example.com/videos/hiking-experience.mp4",
-    "order": 3
-  },
-  {
-    "productId": "ABC-003",
+    "productId": "TOUR-003",
     "type": "Description",
-    "title": "Historical Museum Pass",
-    "description": "Access to the city's premier historical museum. Explore artifacts dating back centuries and learn about the rich history of the region. Audio guides available in multiple languages.",
+    "title": "Food Tour Highlights",
+    "description": "Sample local delicacies at five different stops, including a famous bakery and a street food stall.",
     "mediaUrl": null,
     "order": 1
   },
   {
-    "productId": "ABC-003",
+    "productId": "TOUR-003",
     "type": "Image",
-    "title": "Museum Entrance",
+    "title": "Local Cuisine",
     "description": null,
-    "mediaUrl": "https://example.com/images/museum-entrance.jpg",
+    "mediaUrl": "https://example.com/images/local-cuisine.jpg",
     "order": 2
   },
   {
-    "productId": "ABC-003",
+    "productId": "TOUR-004",
+    "type": "Description",
+    "title": "Ruins Tour Overview",
+    "description": "Explore ancient temples and learn about the civilization that once thrived here.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-004",
     "type": "Image",
-    "title": "Main Exhibition Hall",
+    "title": "Ancient Ruins",
     "description": null,
-    "mediaUrl": "https://example.com/images/exhibition-hall.jpg",
-    "order": 3
+    "mediaUrl": "https://example.com/images/ancient-ruins.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-005",
+    "type": "Description",
+    "title": "Night Tour Highlights",
+    "description": "See the city's iconic landmarks illuminated against the night sky.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-005",
+    "type": "Image",
+    "title": "City Lights",
+    "description": null,
+    "mediaUrl": "https://example.com/images/city-lights.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-006",
+    "type": "Description",
+    "title": "Cruise Experience",
+    "description": "Relax on a comfortable boat while taking in views of the harbor and skyline.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-006",
+    "type": "Image",
+    "title": "Harbor View",
+    "description": null,
+    "mediaUrl": "https://example.com/images/harbor-view.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-007",
+    "type": "Description",
+    "title": "Art Tour Highlights",
+    "description": "Visit three art galleries and a cultural center, with insights from local artists.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-007",
+    "type": "Image",
+    "title": "Art Gallery",
+    "description": null,
+    "mediaUrl": "https://example.com/images/art-gallery.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-008",
+    "type": "Description",
+    "title": "Safari Adventure",
+    "description": "Spot lions, elephants, and other wildlife in their natural habitat.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-008",
+    "type": "Image",
+    "title": "Wildlife",
+    "description": null,
+    "mediaUrl": "https://example.com/images/wildlife.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-009",
+    "type": "Description",
+    "title": "Wine Tour Experience",
+    "description": "Taste award-winning wines and learn about the winemaking process.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-009",
+    "type": "Image",
+    "title": "Vineyard",
+    "description": null,
+    "mediaUrl": "https://example.com/images/vineyard.jpg",
+    "order": 2
+  },
+  {
+    "productId": "TOUR-010",
+    "type": "Description",
+    "title": "Ghost Tour Highlights",
+    "description": "Hear chilling tales of the city's haunted history as you visit eerie locations.",
+    "mediaUrl": null,
+    "order": 1
+  },
+  {
+    "productId": "TOUR-010",
+    "type": "Image",
+    "title": "Haunted House",
+    "description": null,
+    "mediaUrl": "https://example.com/images/haunted-house.jpg",
+    "order": 2
   }
 ]

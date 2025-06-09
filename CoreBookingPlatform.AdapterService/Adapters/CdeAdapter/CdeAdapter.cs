@@ -1,4 +1,5 @@
 ﻿using CoreBookingPlatform.AdapterService.Adapters.AbcAdapter;
+using CoreBookingPlatform.AdapterService.Constants;
 using CoreBookingPlatform.AdapterService.Interfaces;
 using CoreBookingPlatform.AdapterService.Models.DTOs;
 using CoreBookingPlatform.ProductService.Models.DTOs;
@@ -35,7 +36,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
                 response.EnsureSuccessStatusCode();
 
                 var productsJson = await response.Content.ReadAsStringAsync();
-                var externalProducts = JsonSerializer.Deserialize<List<AbcProductDto>>(productsJson);
+                var externalProducts = JsonSerializer.Deserialize<List<CdeProductDto>>(productsJson);
 
                 if (externalProducts == null || !externalProducts.Any())
                 {
@@ -74,7 +75,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
                     }
 
                     var contentJson = await contentResponse.Content.ReadAsStringAsync();
-                    var externalContents = JsonSerializer.Deserialize<List<AbcContentDto>>(contentJson) ?? new List<AbcContentDto>();
+                    var externalContents = JsonSerializer.Deserialize<List<CdeContentDto>>(contentJson) ?? new List<CdeContentDto>();
 
                     var createProductDto = new CreateProductDto
                     {
@@ -155,7 +156,7 @@ namespace CoreBookingPlatform.AdapterService.Adapters.CdeAdapter
                     var availabilityResponse = await _externalApiClient.GetAsync($"api/cde/products/{item.ExternalProductId}/availability");
                     availabilityResponse.EnsureSuccessStatusCode();
                     var availabilityJson = await availabilityResponse.Content.ReadAsStringAsync();
-                    var availability = JsonSerializer.Deserialize<AbcAvailabilityDto>(availabilityJson);
+                    var availability = JsonSerializer.Deserialize<CdeAvailabilityDto>(availabilityJson);
                     if (availability == null || !availability.IsAvailable || availability.Quantity < item.Quantity)
                     {
                         results.Add(new BookingResultDto

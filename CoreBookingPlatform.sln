@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36109.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{ACB66A3F-3286-4C3C-AAEC-FFAAEDC35ADF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIGateway", "APIGateway", "{C2290C18-253B-4BBF-BDD6-FD70B380143B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProductService", "ProductService", "{D25EE83E-CDC7-4ABA-9987-9121C3434B92}"
@@ -30,6 +28,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBookingPlatform.OrderService", "CoreBookingPlatform.OrderService\CoreBookingPlatform.OrderService.csproj", "{D0FF156A-AD60-48EC-97C3-A34B5FBC6618}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBookingPlatform.ApiGateway", "CoreBookingPlatform.ApiGateway\CoreBookingPlatform.ApiGateway.csproj", "{779F25BE-CB19-471F-8626-963174564330}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Dockerfile.mssql-tools = Dockerfile.mssql-tools
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,7 +70,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{ACB66A3F-3286-4C3C-AAEC-FFAAEDC35ADF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C2290C18-253B-4BBF-BDD6-FD70B380143B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D25EE83E-CDC7-4ABA-9987-9121C3434B92} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F41FF4BF-E9AF-4FEF-A268-FFCBCE5622C9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}

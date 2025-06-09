@@ -18,17 +18,23 @@ namespace CoreBookingPlatform.AdapterService.Controllers
         }
 
         [HttpPost("products-and-content")]
-        public async Task<IActionResult> ImportProductsAndContent([FromQuery] string externalSystemName)
+        public async Task<IActionResult> ImportProductsAndContent()
         {
-            var adapter = _adapters.FirstOrDefault(a => a.ExternalSystemName == externalSystemName);
-            if (adapter == null)
+            try
             {
-                _logger.LogWarning("Adapter for {ExternalSystemName} not found.", externalSystemName);
-                return BadRequest("Invalid external system name.");
+                
+                    foreach(var adapter in _adapters)
+                    {
+                        await adapter.ImportProductsAndContentAsync();
+                    }
+                    return Ok("Product and content import triggered for all exteranl systems");
+                
+                
             }
-
-            await adapter.ImportProductsAndContentAsync();
-            return Ok($"Product and content import triggered for {externalSystemName}.");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Error importing products and content.");
+                return StatusCode(500, "Error importing products and content.");
+            }
         }
 
         [HttpGet("availability")]

@@ -1,96 +1,182 @@
 {
-  "CDE-101": [
+  "HOTEL-001-STANDARD": [
     {
-      "ProductId": "CDE-101",
+      "ProductId": "HOTEL-001-STANDARD",
       "Type": "Description",
-      "Title": "Sunset Sailing Cruise",
-      "Description": "Experience the magic of sunset from the water on our luxury sailing yacht. Cruise along the coastline as the sky transforms with vibrant colors. Our experienced captain will ensure a smooth and memorable journey while you enjoy complimentary drinks and light snacks.",
+      "Title": "Room Features",
+      "Description": "A comfortable room perfect for relaxation, overlooking the hotel’s lush gardens.",
       "MediaUrl": null,
       "Order": 1
     },
     {
-      "ProductId": "CDE-101",
+      "ProductId": "HOTEL-001-STANDARD",
       "Type": "Image",
-      "Title": "Sailing Yacht",
+      "Title": "Garden View",
       "Description": null,
-      "MediaUrl": "https://example.com/images/sailing-yacht.jpg",
+      "MediaUrl": "https://example.com/images/garden-view-room.jpg",
       "Order": 2
-    },
-    {
-      "ProductId": "CDE-101",
-      "Type": "Image",
-      "Title": "Sunset View",
-      "Description": null,
-      "MediaUrl": "https://example.com/images/sunset-cruise.jpg",
-      "Order": 3
     }
   ],
-  "CDE-102": [
+  "HOTEL-001-DELUXE": [
     {
-      "ProductId": "CDE-102",
+      "ProductId": "HOTEL-001-DELUXE",
       "Type": "Description",
-      "Title": "Wine Tasting Tour",
-      "Description": "Discover the region's finest wineries on this guided tour. Visit three distinctive vineyards, learn about winemaking processes, and sample a variety of premium wines. Our knowledgeable guides will share insights about wine appreciation and local viticulture traditions.",
+      "Title": "Room Features",
+      "Description": "Enjoy a spacious room with modern amenities, a private balcony, and stunning ocean views.",
       "MediaUrl": null,
       "Order": 1
     },
     {
-      "ProductId": "CDE-102",
+      "ProductId": "HOTEL-001-DELUXE",
       "Type": "Image",
-      "Title": "Vineyard",
+      "Title": "Ocean View",
       "Description": null,
-      "MediaUrl": "https://example.com/images/vineyard.jpg",
+      "MediaUrl": "https://example.com/images/ocean-view-room.jpg",
       "Order": 2
-    },
-    {
-      "ProductId": "CDE-102",
-      "Type": "Image",
-      "Title": "Wine Tasting",
-      "Description": null,
-      "MediaUrl": "https://example.com/images/wine-tasting.jpg",
-      "Order": 3
-    },
-    {
-      "ProductId": "CDE-102",
-      "Type": "Video",
-      "Title": "Tour Preview",
-      "Description": null,
-      "MediaUrl": "https://example.com/videos/wine-tour-preview.mp4",
-      "Order": 4
     }
   ],
-  "CDE-103": [
+  "HOTEL-001-SUITE": [
     {
-      "ProductId": "CDE-103",
+      "ProductId": "HOTEL-001-SUITE",
       "Type": "Description",
-      "Title": "Helicopter City Tour",
-      "Description": "Soar above the city skyline in a state-of-the-art helicopter for an unforgettable aerial adventure. See iconic landmarks from a unique perspective and capture stunning photos. Your pilot will provide interesting commentary about the city's history and architecture throughout the flight.",
+      "Title": "Suite Features",
+      "Description": "A luxurious suite with a separate living area, ideal for longer stays or special occasions.",
       "MediaUrl": null,
       "Order": 1
     },
     {
-      "ProductId": "CDE-103",
+      "ProductId": "HOTEL-001-SUITE",
       "Type": "Image",
-      "Title": "Helicopter",
+      "Title": "Suite Interior",
       "Description": null,
-      "MediaUrl": "https://example.com/images/helicopter.jpg",
+      "MediaUrl": "https://example.com/images/suite-interior.jpg",
       "Order": 2
+    }
+  ],
+  "HOTEL-002-STANDARD": [
+    {
+      "ProductId": "HOTEL-002-STANDARD",
+      "Type": "Description",
+      "Title": "Room Features",
+      "Description": "A budget-friendly option with all the essentials for a comfortable stay.",
+      "MediaUrl": null,
+      "Order": 1
     },
     {
-      "ProductId": "CDE-103",
+      "ProductId": "HOTEL-002-STANDARD",
       "Type": "Image",
-      "Title": "Aerial City View",
+      "Title": "Standard Room",
       "Description": null,
-      "MediaUrl": "https://example.com/images/aerial-city-view.jpg",
-      "Order": 3
+      "MediaUrl": "https://example.com/images/standard-room.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-002-DELUXE": [
+    {
+      "ProductId": "HOTEL-002-DELUXE",
+      "Type": "Description",
+      "Title": "Room Features",
+      "Description": "An upgraded room with additional space and amenities for a more comfortable stay.",
+      "MediaUrl": null,
+      "Order": 1
     },
     {
-      "ProductId": "CDE-103",
-      "Type": "Video",
-      "Title": "Helicopter Experience",
+      "ProductId": "HOTEL-002-DELUXE",
+      "Type": "Image",
+      "Title": "Deluxe Room",
       "Description": null,
-      "MediaUrl": "https://example.com/videos/helicopter-experience.mp4",
-      "Order": 4
+      "MediaUrl": "https://example.com/images/deluxe-room.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-002-FAMILY": [
+    {
+      "ProductId": "HOTEL-002-FAMILY",
+      "Type": "Description",
+      "Title": "Room Features",
+      "Description": "A spacious room designed for families, with extra beds and amenities.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "HOTEL-002-FAMILY",
+      "Type": "Image",
+      "Title": "Family Room",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/family-room.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-003-STANDARD": [
+    {
+      "ProductId": "HOTEL-003-STANDARD",
+      "Type": "Description",
+      "Title": "Room Features",
+      "Description": "A rustic room with a cozy atmosphere and beautiful mountain views.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "HOTEL-003-STANDARD",
+      "Type": "Image",
+      "Title": "Mountain View",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/mountain-view-room.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-003-DELUXE": [
+    {
+      "ProductId": "HOTEL-003-DELUXE",
+      "Type": "Description",
+      "Title": "Room Features",
+      "Description": "A deluxe room with a private balcony and fireplace for a cozy retreat.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "HOTEL-003-DELUXE",
+      "Type": "Image",
+      "Title": "Deluxe Room with Balcony",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/deluxe-balcony.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-003-SUITE": [
+    {
+      "ProductId": "HOTEL-003-SUITE",
+      "Type": "Description",
+      "Title": "Suite Features",
+      "Description": "A luxurious suite with premium amenities and breathtaking views.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "HOTEL-003-SUITE",
+      "Type": "Image",
+      "Title": "Luxury Suite",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/luxury-suite.jpg",
+      "Order": 2
+    }
+  ],
+  "HOTEL-003-CABIN": [
+    {
+      "ProductId": "HOTEL-003-CABIN",
+      "Type": "Description",
+      "Title": "Cabin Features",
+      "Description": "A private cabin with two bedrooms, perfect for a secluded getaway.",
+      "MediaUrl": null,
+      "Order": 1
+    },
+    {
+      "ProductId": "HOTEL-003-CABIN",
+      "Type": "Image",
+      "Title": "Private Cabin",
+      "Description": null,
+      "MediaUrl": "https://example.com/images/private-cabin.jpg",
+      "Order": 2
     }
   ]
 }

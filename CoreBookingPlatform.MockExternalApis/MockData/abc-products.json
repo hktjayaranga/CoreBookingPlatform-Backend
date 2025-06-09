@@ -1,53 +1,182 @@
 [
   {
-    "Id": "ABC-001",
-    "Name": "City Sightseeing Tour",
-    "Description": "Explore the city's main attractions with our guided tour",
-    "Price": 49.99,
+    "Id": "TOUR-001",
+    "Name": "City Walking Tour",
+    "Description": "A guided walking tour through the city's historic district.",
+    "Price": 35.00,
     "Currency": "USD",
-    "SKU": "TOUR-CITY-001",
+    "SKU": "TOUR-WALK-001",
     "Categories": {
-      "City Tours": "Tours that showcase the main features and landmarks of a city.",
-      "Guided Tours": "Tours led by knowledgeable guides providing local insights."
+      "Guided Tours": "Tours with expert guides",
+      "City Exploration": "Discover urban landmarks and history"
+    },
+    "Attributes": {
+      "Duration": "2 hours",
+      "Languages": "English, Spanish",
+      "PriceChild": "20.00",
+      "MeetingPoint": "Central Square"
+    }
+  },
+  {
+    "Id": "TOUR-002",
+    "Name": "Mountain Day Trek",
+    "Description": "An adventurous hike through scenic mountain trails.",
+    "Price": 60.00,
+    "Currency": "USD",
+    "SKU": "TOUR-TREK-002",
+    "Categories": {
+      "Outdoor Activities": "Nature-based adventures",
+      "Guided Tours": "Tours with expert guides"
+    },
+    "Attributes": {
+      "Duration": "5 hours",
+      "Languages": "English",
+      "PriceChild": "30.00",
+      "Difficulty": "Moderate"
+    }
+  },
+  {
+    "Id": "TOUR-003",
+    "Name": "Culinary Delights Tour",
+    "Description": "Taste the city's best dishes on this guided food tour.",
+    "Price": 50.00,
+    "Currency": "USD",
+    "SKU": "TOUR-FOOD-003",
+    "Categories": {
+      "Guided Tours": "Tours with expert guides",
+      "Food and Drink": "Experiences centered around local cuisine"
     },
     "Attributes": {
       "Duration": "3 hours",
-      "Language": "English",
+      "Languages": "English",
+      "PriceChild": "25.00",
+      "Includes": "Food tastings"
+    }
+  },
+  {
+    "Id": "TOUR-004",
+    "Name": "Ancient Ruins Exploration",
+    "Description": "Discover the city's ancient past with a visit to historical ruins.",
+    "Price": 40.00,
+    "Currency": "USD",
+    "SKU": "TOUR-HIST-004",
+    "Categories": {
+      "Guided Tours": "Tours with expert guides",
+      "History and Culture": "Experiences focused on historical and cultural heritage"
+    },
+    "Attributes": {
+      "Duration": "4 hours",
+      "Languages": "English, French",
+      "PriceChild": "20.00",
+      "Includes": "Entrance fees"
+    }
+  },
+  {
+    "Id": "TOUR-005",
+    "Name": "City Lights Night Tour",
+    "Description": "See the city come alive at night with this guided tour.",
+    "Price": 30.00,
+    "Currency": "USD",
+    "SKU": "TOUR-NIGHT-005",
+    "Categories": {
+      "Guided Tours": "Tours with expert guides",
+      "City Exploration": "Discover urban landmarks and history"
+    },
+    "Attributes": {
+      "Duration": "2 hours",
+      "Languages": "English",
+      "PriceChild": "15.00",
       "Transportation": "Bus"
     }
   },
   {
-    "Id": "ABC-002",
-    "Name": "Mountain Hiking Adventure",
-    "Description": "Experience the beauty of nature with our mountain hiking tour",
-    "Price": 79.99,
+    "Id": "TOUR-006",
+    "Name": "Harbor Cruise",
+    "Description": "Enjoy a scenic boat ride around the harbor.",
+    "Price": 25.00,
     "Currency": "USD",
-    "SKU": "TOUR-HIKING-001",
+    "SKU": "TOUR-BOAT-006",
     "Categories": {
-      "Outdoor Activities": "Activities conducted in natural, open-air environments.",
-      "Adventure": "Exciting experiences featuring physical challenge and exploration."
+      "Water Activities": "Activities on or near water",
+      "Guided Tours": "Tours with expert guides"
     },
     "Attributes": {
-      "Duration": "6 hours",
-      "Difficulty": "Moderate",
-      "Includes": "Guide, Water, Snacks"
+      "Duration": "1.5 hours",
+      "Languages": "English",
+      "PriceChild": "12.50",
+      "Includes": "Refreshments"
     }
   },
   {
-    "Id": "ABC-003",
-    "Name": "Historical Museum Pass",
-    "Description": "Access to the city's premier historical museum",
-    "Price": 24.99,
+    "Id": "TOUR-007",
+    "Name": "Art and Culture Experience",
+    "Description": "Immerse yourself in the city's art scene with visits to galleries and cultural centers.",
+    "Price": 45.00,
     "Currency": "USD",
-    "SKU": "MUSEUM-HIST-001",
+    "SKU": "TOUR-ART-007",
     "Categories": {
-      "Museums": "Visits to cultural and historical exhibits in museum settings.",
-      "Culture": "Experiences highlighting local customs, art, and heritage."
+      "Guided Tours": "Tours with expert guides",
+      "Arts and Entertainment": "Experiences related to visual and performing arts"
     },
     "Attributes": {
-      "Duration": "1 day",
-      "Includes": "Audio guide",
-      "Opening Hours": "9:00 AM - 5:00 PM"
+      "Duration": "3 hours",
+      "Languages": "English, Spanish",
+      "PriceChild": "22.50",
+      "Includes": "Entrance fees"
+    }
+  },
+  {
+    "Id": "TOUR-008",
+    "Name": "Wildlife Safari",
+    "Description": "Spot exotic wildlife on this thrilling safari adventure.",
+    "Price": 75.00,
+    "Currency": "USD",
+    "SKU": "TOUR-SAFARI-008",
+    "Categories": {
+      "Outdoor Activities": "Nature-based adventures",
+      "Guided Tours": "Tours with expert guides"
+    },
+    "Attributes": {
+      "Duration": "6 hours",
+      "Languages": "English",
+      "PriceChild": "37.50",
+      "Includes": "Binoculars, Lunch"
+    }
+  },
+  {
+    "Id": "TOUR-009",
+    "Name": "Wine Tasting Tour",
+    "Description": "Explore local vineyards and taste exquisite wines.",
+    "Price": 55.00,
+    "Currency": "USD",
+    "SKU": "TOUR-WINE-009",
+    "Categories": {
+      "Guided Tours": "Tours with expert guides",
+      "Food and Drink": "Experiences centered around local cuisine"
+    },
+    "Attributes": {
+      "Duration": "4 hours",
+      "Languages": "English",
+      "PriceChild": "N/A",
+      "MinimumAge": "21"
+    }
+  },
+  {
+    "Id": "TOUR-010",
+    "Name": "Ghost Stories Tour",
+    "Description": "Uncover the city's haunted past on this spooky evening tour.",
+    "Price": 28.00,
+    "Currency": "USD",
+    "SKU": "TOUR-GHOST-010",
+    "Categories": {
+      "Guided Tours": "Tours with expert guides",
+      "Unique Experiences": "Unconventional and memorable activities"
+    },
+    "Attributes": {
+      "Duration": "1.5 hours",
+      "Languages": "English",
+      "PriceChild": "14.00",
+      "StartTime": "8:00 PM"
     }
   }
 ]

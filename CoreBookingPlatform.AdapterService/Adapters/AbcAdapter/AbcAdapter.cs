@@ -1,11 +1,10 @@
-﻿using CoreBookingPlatform.AdapterService.Interfaces;
+﻿using CoreBookingPlatform.AdapterService.Constants;
+using CoreBookingPlatform.AdapterService.Interfaces;
 using CoreBookingPlatform.AdapterService.Models.DTOs;
 using CoreBookingPlatform.ProductService.Models.DTOs;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CoreBookingPlatform.AdapterService.Adapters.AbcAdapter
 {
