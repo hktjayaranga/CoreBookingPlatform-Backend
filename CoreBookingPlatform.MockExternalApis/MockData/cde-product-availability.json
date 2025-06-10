@@ -14,7 +14,7 @@
   {
     "productId": "HOTEL-001-SUITE",
     "isAvailable": true,
-    "quantity": 2,
+    "quantity": 0,
     "price": 250.00
   },
   {
@@ -56,7 +56,7 @@
   {
     "productId": "HOTEL-003-CABIN",
     "isAvailable": true,
-    "quantity": 2,
+    "quantity": 0,
     "price": 200.00
   }
 ]

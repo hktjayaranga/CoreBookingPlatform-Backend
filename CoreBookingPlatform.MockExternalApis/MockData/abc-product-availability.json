@@ -8,7 +8,7 @@
   {
     "productId": "TOUR-002",
     "isAvailable": true,
-    "quantity": 15,
+    "quantity": 0,
     "price": 60.00
   },
   {
@@ -56,7 +56,7 @@
   {
     "productId": "TOUR-010",
     "isAvailable": true,
-    "quantity": 28,
+    "quantity": 0,
     "price": 28.00
   }
 ]

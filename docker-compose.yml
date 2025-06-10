@@ -25,6 +25,7 @@ services:
       - api-gateway
     networks:
       - default
+  
   product-service:
     build:
       context: ./

@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Dockerfile.mssql-tools = Dockerfile.mssql-tools
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBookingPlatform.ProductService.Tests", "CoreBookingPlatform.ProductService.Tests\CoreBookingPlatform.ProductService.Tests.csproj", "{F4728FE3-51F6-4A60-B21F-D36337EA5334}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBookingPlatform.CartService.Tests", "CoreBookingPlatform.CartService.Tests\CoreBookingPlatform.CartService.Tests.csproj", "{EE027963-73F3-4EDE-BEF6-79FB38A79647}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,14 @@ Global
 		{779F25BE-CB19-471F-8626-963174564330}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{779F25BE-CB19-471F-8626-963174564330}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{779F25BE-CB19-471F-8626-963174564330}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4728FE3-51F6-4A60-B21F-D36337EA5334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4728FE3-51F6-4A60-B21F-D36337EA5334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4728FE3-51F6-4A60-B21F-D36337EA5334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4728FE3-51F6-4A60-B21F-D36337EA5334}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE027963-73F3-4EDE-BEF6-79FB38A79647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE027963-73F3-4EDE-BEF6-79FB38A79647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE027963-73F3-4EDE-BEF6-79FB38A79647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE027963-73F3-4EDE-BEF6-79FB38A79647}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +94,8 @@ Global
 		{E0DA971B-54C1-4508-9711-3D9F5672F75A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D0FF156A-AD60-48EC-97C3-A34B5FBC6618} = {E0DA971B-54C1-4508-9711-3D9F5672F75A}
 		{779F25BE-CB19-471F-8626-963174564330} = {C2290C18-253B-4BBF-BDD6-FD70B380143B}
+		{F4728FE3-51F6-4A60-B21F-D36337EA5334} = {D25EE83E-CDC7-4ABA-9987-9121C3434B92}
+		{EE027963-73F3-4EDE-BEF6-79FB38A79647} = {F41FF4BF-E9AF-4FEF-A268-FFCBCE5622C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85D916BC-EAD7-48A0-B636-5123A7A15994}
